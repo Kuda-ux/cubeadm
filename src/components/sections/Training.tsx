@@ -1,106 +1,74 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { Clock, Users, Award, ArrowRight, Star } from 'lucide-react'
+import { Clock, Users, ArrowRight, Sparkles, Star } from 'lucide-react'
 
 const courses = [
   {
     title: 'Cybersecurity Fundamentals',
-    description: 'Master the essentials of cybersecurity, threat detection, and security best practices.',
+    description: 'Master cybersecurity essentials, threat detection, and security best practices.',
     image: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=600&q=80',
     duration: '12 Weeks',
     students: '150+',
-    level: 'Beginner to Advanced',
-    price: '$499',
     rating: 4.9,
     href: '/training/cybersecurity',
-    featured: true,
   },
   {
-    title: 'Cloud Computing (AWS & Azure)',
-    description: 'Learn cloud architecture, deployment, and management on leading platforms.',
+    title: 'Cloud Computing',
+    description: 'Learn cloud architecture and deployment on AWS and Azure platforms.',
     image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=600&q=80',
     duration: '10 Weeks',
     students: '120+',
-    level: 'Intermediate',
-    price: '$599',
     rating: 4.8,
     href: '/training/cloud',
-    featured: true,
   },
   {
-    title: 'Cisco Networking (CCNA)',
-    description: 'Comprehensive Cisco networking training for CCNA certification preparation.',
+    title: 'Cisco Networking',
+    description: 'Comprehensive CCNA certification preparation with hands-on labs.',
     image: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=600&q=80',
     duration: '14 Weeks',
     students: '200+',
-    level: 'Beginner to Intermediate',
-    price: '$549',
     rating: 4.9,
     href: '/training/networking',
-    featured: false,
-  },
-  {
-    title: 'Software Engineering Foundations',
-    description: 'Build a strong foundation in software development, coding, and best practices.',
-    image: 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=600&q=80',
-    duration: '16 Weeks',
-    students: '180+',
-    level: 'Beginner',
-    price: '$449',
-    rating: 4.7,
-    href: '/training/software',
-    featured: false,
-  },
-  {
-    title: 'AI & Automation Skills',
-    description: 'Explore artificial intelligence, machine learning, and business automation.',
-    image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&q=80',
-    duration: '8 Weeks',
-    students: '90+',
-    level: 'Intermediate to Advanced',
-    price: '$699',
-    rating: 4.8,
-    href: '/training/ai-automation',
-    featured: true,
-  },
-  {
-    title: 'IT Support & Helpdesk',
-    description: 'Develop essential IT support skills for helpdesk and technical support roles.',
-    image: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?w=600&q=80',
-    duration: '6 Weeks',
-    students: '250+',
-    level: 'Beginner',
-    price: '$299',
-    rating: 4.6,
-    href: '/training/it-support',
-    featured: false,
   },
 ]
 
 export default function Training() {
   return (
-    <section id="training" className="section-padding bg-dark-800">
-      <div className="container-custom mx-auto">
+    <section id="training" className="relative py-24 overflow-hidden">
+      {/* Background */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[#020c2d] via-[#01124b] to-[#020c2d]" />
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(0,92,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(0,92,255,0.03)_1px,transparent_1px)] bg-[size:50px_50px]" />
+      
+      {/* Glow */}
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#00D4FF]/10 rounded-full blur-[150px]" />
+      <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[#005CFF]/10 rounded-full blur-[150px]" />
+
+      <div className="relative z-10 max-w-6xl mx-auto px-4">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <span className="text-primary-500 font-semibold text-sm uppercase tracking-wider">
-            Training Programs
-          </span>
-          <h2 className="heading-lg text-white mt-3 mb-4">
-            World-Class Technology Courses
+          <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#005CFF]/10 border border-[#005CFF]/20 rounded-full mb-6">
+            <Sparkles className="w-4 h-4 text-[#00D4FF]" />
+            <span className="text-[#00D4FF] font-medium text-sm">Training Programs</span>
+          </div>
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+            World-Class
+            <span className="block bg-gradient-to-r from-[#005CFF] to-[#00D4FF] bg-clip-text text-transparent">
+              Technology Courses
+            </span>
           </h2>
-          <p className="text-body max-w-2xl mx-auto">
-            Gain in-demand skills with our industry-certified training programs. 
-            Learn from expert instructors and prepare for globally recognized certifications.
+          <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+            Industry-certified training programs with expert instructors 
+            preparing you for globally recognized certifications.
           </p>
         </div>
 
         {/* Course Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-3 gap-8 mb-12">
           {courses.map((course) => (
-            <div
+            <Link
               key={course.title}
-              className="group bg-dark-900 border border-white/5 rounded-2xl overflow-hidden hover:border-primary-500/30 transition-all duration-300"
+              href={course.href}
+              className="group bg-gradient-to-br from-white/[0.08] to-white/[0.02] backdrop-blur-sm border border-white/10 rounded-3xl overflow-hidden hover:border-[#005CFF]/30 transition-all duration-300"
             >
               {/* Course Image */}
               <div className="relative h-48 overflow-hidden">
@@ -108,23 +76,18 @@ export default function Training() {
                   src={course.image}
                   alt={course.title}
                   fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  className="object-cover group-hover:scale-110 transition-transform duration-500"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-dark-900 to-transparent" />
-                {course.featured && (
-                  <div className="absolute top-4 left-4 px-3 py-1 bg-primary-500 text-white text-xs font-semibold rounded-full">
-                    Featured
-                  </div>
-                )}
-                <div className="absolute bottom-4 left-4 flex items-center gap-1 text-yellow-400">
-                  <Star className="w-4 h-4 fill-current" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#01124b] via-transparent to-transparent" />
+                <div className="absolute bottom-4 left-4 flex items-center gap-1">
+                  <Star className="w-4 h-4 text-yellow-400 fill-current" />
                   <span className="text-sm font-medium text-white">{course.rating}</span>
                 </div>
               </div>
 
               {/* Course Content */}
               <div className="p-6">
-                <h3 className="text-lg font-semibold text-white mb-2 group-hover:text-primary-500 transition-colors">
+                <h3 className="text-xl font-bold text-white mb-3 group-hover:text-[#00D4FF] transition-colors">
                   {course.title}
                 </h3>
                 <p className="text-gray-400 text-sm mb-4 line-clamp-2">
@@ -133,48 +96,35 @@ export default function Training() {
 
                 {/* Course Meta */}
                 <div className="flex items-center gap-4 text-sm text-gray-500 mb-4">
-                  <div className="flex items-center gap-1">
-                    <Clock className="w-4 h-4" />
-                    {course.duration}
+                  <div className="flex items-center gap-1.5">
+                    <Clock className="w-4 h-4 text-[#00D4FF]" />
+                    <span className="text-gray-400">{course.duration}</span>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <Users className="w-4 h-4" />
-                    {course.students}
+                  <div className="flex items-center gap-1.5">
+                    <Users className="w-4 h-4 text-[#00D4FF]" />
+                    <span className="text-gray-400">{course.students}</span>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2 mb-4">
-                  <Award className="w-4 h-4 text-primary-500" />
-                  <span className="text-sm text-gray-400">{course.level}</span>
-                </div>
-
-                {/* Price & CTA */}
-                <div className="flex items-center justify-between pt-4 border-t border-white/5">
-                  <div className="text-xl font-bold text-white">{course.price}</div>
-                  <Link
-                    href={course.href}
-                    className="inline-flex items-center gap-1 text-primary-500 text-sm font-medium hover:gap-2 transition-all"
-                  >
-                    View Course
-                    <ArrowRight className="w-4 h-4" />
-                  </Link>
+                {/* CTA */}
+                <div className="flex items-center gap-2 text-[#00D4FF] text-sm font-medium pt-4 border-t border-white/10">
+                  View Course
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
 
-        {/* CTA Section */}
-        <div className="mt-16 text-center">
-          <div className="inline-flex flex-col sm:flex-row gap-4">
-            <Link href="/training" className="btn-primary flex items-center justify-center gap-2">
-              Browse All Courses
-              <ArrowRight className="w-5 h-5" />
-            </Link>
-            <Link href="/contact" className="btn-outline flex items-center justify-center gap-2">
-              Request Course Brochure
-            </Link>
-          </div>
+        {/* CTA */}
+        <div className="text-center">
+          <Link 
+            href="/training" 
+            className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-[#005CFF] to-[#00D4FF] text-white font-bold rounded-xl hover:shadow-lg hover:shadow-[#005CFF]/30 transition-all duration-300"
+          >
+            Browse All Courses
+            <ArrowRight className="w-5 h-5" />
+          </Link>
         </div>
       </div>
     </section>

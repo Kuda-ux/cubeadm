@@ -1,140 +1,100 @@
-import Image from 'next/image'
-import { Target, Eye, Lightbulb, Users, Award, Globe } from 'lucide-react'
+import { Target, Eye, Sparkles } from 'lucide-react'
 
-const values = [
-  {
-    icon: Lightbulb,
-    title: 'Innovation',
-    description: 'Embracing cutting-edge technologies to deliver forward-thinking solutions.',
-  },
-  {
-    icon: Award,
-    title: 'Excellence',
-    description: 'Committed to the highest standards in training and service delivery.',
-  },
-  {
-    icon: Users,
-    title: 'Empowerment',
-    description: 'Enabling individuals and businesses to achieve their full potential.',
-  },
-  {
-    icon: Globe,
-    title: 'Impact',
-    description: 'Creating lasting positive change in Zimbabwe and across Africa.',
-  },
+const stats = [
+  { value: '500+', label: 'Students Trained' },
+  { value: '50+', label: 'Corporate Clients' },
+  { value: '98%', label: 'Success Rate' },
+  { value: '15+', label: 'Certifications' },
 ]
+
+const partners = ['Cisco', 'AWS', 'Microsoft', 'CompTIA', 'Oracle', 'VMware']
 
 export default function About() {
   return (
-    <section id="about" className="section-padding bg-dark-800">
-      <div className="container-custom mx-auto">
+    <section id="about" className="relative py-24 overflow-hidden">
+      {/* Background */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[#01124b] via-[#020c2d] to-[#01124b]" />
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(0,92,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(0,92,255,0.03)_1px,transparent_1px)] bg-[size:50px_50px]" />
+      
+      {/* Glow Effects */}
+      <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-[#005CFF]/10 rounded-full blur-[150px]" />
+      <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-[#00D4FF]/10 rounded-full blur-[150px]" />
+
+      <div className="relative z-10 max-w-6xl mx-auto px-4">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <span className="text-primary-500 font-semibold text-sm uppercase tracking-wider">
-            About CubeADM
-          </span>
-          <h2 className="heading-lg text-white mt-3 mb-4">
-            Shaping the Future of Technology in Africa
+          <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#005CFF]/10 border border-[#005CFF]/20 rounded-full mb-6">
+            <Sparkles className="w-4 h-4 text-[#00D4FF]" />
+            <span className="text-[#00D4FF] font-medium text-sm">About CubeADM</span>
+          </div>
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+            Shaping the Future of
+            <span className="block bg-gradient-to-r from-[#005CFF] to-[#00D4FF] bg-clip-text text-transparent">
+              Technology in Africa
+            </span>
           </h2>
-          <p className="text-body max-w-2xl mx-auto">
-            CubeADM is a modern, future-focused technology training and IT solutions company 
-            positioned to become a leading provider of advanced digital training and enterprise 
-            support solutions in Zimbabwe and across Africa.
+          <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+            A modern, future-focused technology training and IT solutions company 
+            delivering world-class digital training and enterprise solutions.
           </p>
         </div>
 
-        {/* Mission & Vision */}
-        <div className="grid md:grid-cols-2 gap-8 mb-16">
+        {/* Mission & Vision Cards */}
+        <div className="grid md:grid-cols-2 gap-6 mb-16">
           {/* Mission */}
-          <div className="glass-effect rounded-2xl p-8 card-shine">
-            <div className="w-14 h-14 bg-primary-500/10 rounded-xl flex items-center justify-center mb-6">
-              <Target className="w-7 h-7 text-primary-500" />
+          <div className="group p-8 bg-gradient-to-br from-white/[0.08] to-white/[0.02] backdrop-blur-sm border border-white/10 rounded-3xl hover:border-[#005CFF]/30 transition-all duration-300">
+            <div className="w-14 h-14 bg-gradient-to-br from-[#005CFF] to-[#00D4FF] rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-[#005CFF]/20">
+              <Target className="w-7 h-7 text-white" />
             </div>
-            <h3 className="text-xl font-semibold text-white mb-4">Our Mission</h3>
+            <h3 className="text-2xl font-bold text-white mb-4">Our Mission</h3>
             <p className="text-gray-400 leading-relaxed">
-              To empower individuals, SMEs, and corporate institutions with the technical skills 
-              and systems required to thrive in today&apos;s digital ecosystem. We combine education, 
-              innovation, automation, and hands-on IT delivery to create lasting impact.
+              To empower individuals and organizations with the technical skills 
+              and systems required to thrive in today&apos;s digital ecosystem through 
+              education, innovation, and hands-on IT delivery.
             </p>
           </div>
 
           {/* Vision */}
-          <div className="glass-effect rounded-2xl p-8 card-shine">
-            <div className="w-14 h-14 bg-accent-blue/10 rounded-xl flex items-center justify-center mb-6">
-              <Eye className="w-7 h-7 text-accent-blue" />
+          <div className="group p-8 bg-gradient-to-br from-white/[0.08] to-white/[0.02] backdrop-blur-sm border border-white/10 rounded-3xl hover:border-[#00D4FF]/30 transition-all duration-300">
+            <div className="w-14 h-14 bg-gradient-to-br from-[#00D4FF] to-[#005CFF] rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-[#00D4FF]/20">
+              <Eye className="w-7 h-7 text-white" />
             </div>
-            <h3 className="text-xl font-semibold text-white mb-4">Our Vision</h3>
+            <h3 className="text-2xl font-bold text-white mb-4">Our Vision</h3>
             <p className="text-gray-400 leading-relaxed">
               To be the leading technology training and IT solutions provider in Africa, 
-              recognized for excellence, innovation, and our commitment to bridging the 
-              digital skills gap while delivering world-class enterprise solutions.
+              recognized for excellence and our commitment to bridging the digital skills gap.
             </p>
           </div>
         </div>
 
-        {/* Core Values */}
-        <div className="mb-16">
-          <h3 className="text-2xl font-semibold text-white text-center mb-10">Our Core Values</h3>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {values.map((value, index) => (
-              <div
-                key={value.title}
-                className="text-center p-6 rounded-xl bg-dark-700/50 border border-white/5 hover:border-primary-500/30 transition-all duration-300 group"
-              >
-                <div className="w-12 h-12 mx-auto bg-primary-500/10 rounded-lg flex items-center justify-center mb-4 group-hover:bg-primary-500/20 transition-colors">
-                  <value.icon className="w-6 h-6 text-primary-500" />
+        {/* Stats */}
+        <div className="p-8 bg-gradient-to-r from-[#005CFF]/10 via-[#00D4FF]/5 to-[#005CFF]/10 border border-[#005CFF]/20 rounded-3xl mb-16">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            {stats.map((stat) => (
+              <div key={stat.label} className="text-center">
+                <div className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-[#005CFF] to-[#00D4FF] bg-clip-text text-transparent mb-2">
+                  {stat.value}
                 </div>
-                <h4 className="text-lg font-semibold text-white mb-2">{value.title}</h4>
-                <p className="text-sm text-gray-400">{value.description}</p>
+                <div className="text-gray-400 text-sm">{stat.label}</div>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Image & Stats */}
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          <div className="relative">
-            <div className="relative rounded-2xl overflow-hidden">
-              <Image
-                src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&q=80"
-                alt="CubeADM Team"
-                width={600}
-                height={400}
-                className="w-full h-auto object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-dark-900/80 to-transparent" />
-            </div>
-            {/* Floating Card */}
-            <div className="absolute -bottom-6 -right-6 bg-dark-800 border border-white/10 rounded-xl p-6 shadow-xl">
-              <div className="text-3xl font-bold text-primary-500 mb-1">5+</div>
-              <div className="text-sm text-gray-400">Years of Excellence</div>
-            </div>
-          </div>
-
-          <div>
-            <h3 className="text-2xl font-semibold text-white mb-6">
-              Why Organizations Trust CubeADM
-            </h3>
-            <p className="text-gray-400 mb-6 leading-relaxed">
-              We align our standards with global industry leaders like Cisco, IBM, Oracle, 
-              Palo Alto Networks, and AWS. Our approach combines international best practices 
-              with deep understanding of local business needs.
-            </p>
-            <ul className="space-y-4">
-              {[
-                'Industry-certified instructors and consultants',
-                'Hands-on, practical training methodology',
-                'Enterprise-grade IT solutions and support',
-                'Proven track record with leading organizations',
-              ].map((item, index) => (
-                <li key={index} className="flex items-start gap-3">
-                  <div className="w-5 h-5 rounded-full bg-primary-500/20 flex items-center justify-center mt-0.5">
-                    <div className="w-2 h-2 rounded-full bg-primary-500" />
-                  </div>
-                  <span className="text-gray-300">{item}</span>
-                </li>
-              ))}
-            </ul>
+        {/* Partners */}
+        <div className="text-center">
+          <p className="text-gray-500 text-sm uppercase tracking-wider mb-8">
+            Aligned with Global Technology Leaders
+          </p>
+          <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12">
+            {partners.map((partner) => (
+              <div
+                key={partner}
+                className="text-2xl font-bold text-gray-600 hover:text-[#00D4FF] transition-colors cursor-default"
+              >
+                {partner}
+              </div>
+            ))}
           </div>
         </div>
       </div>
