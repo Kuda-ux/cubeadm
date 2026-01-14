@@ -18,8 +18,18 @@ import {
 } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Managed IT Services | CubeADM - IT Support Zimbabwe',
-  description: 'Proactive managed IT services including helpdesk support, remote monitoring, and IT consulting for businesses in Zimbabwe.',
+  title: 'Managed IT Services Zimbabwe | 24/7 IT Support & Monitoring | CubeADM',
+  description: 'CubeADM provides managed IT services in Zimbabwe: 24/7 helpdesk support, proactive monitoring, IT maintenance, and consulting. 99.9% uptime SLA, <15min response time. Serving Harare, Zimbabwe, and Southern Africa.',
+  keywords: ['Managed IT Services Zimbabwe', 'IT Support Zimbabwe', '24/7 IT Helpdesk Harare', 'IT Monitoring Zimbabwe', 'IT Maintenance Zimbabwe', 'IT Consulting Zimbabwe', 'IT Outsourcing Zimbabwe', 'Remote IT Support Zimbabwe', 'Proactive IT Services Zimbabwe', 'IT Service Provider Harare'],
+  openGraph: {
+    title: 'Managed IT Services Zimbabwe | 24/7 IT Support | CubeADM',
+    description: 'Proactive managed IT services including helpdesk support, remote monitoring, and IT consulting for businesses in Zimbabwe.',
+    url: 'https://cubeadm.co.zw/services/managed-it',
+    type: 'website',
+  },
+  alternates: {
+    canonical: 'https://cubeadm.co.zw/services/managed-it',
+  },
 }
 
 const services = [

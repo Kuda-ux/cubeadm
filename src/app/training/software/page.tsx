@@ -4,8 +4,18 @@ import Image from 'next/image'
 import { Code, Award, Clock, Users, ArrowRight } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Software Engineering Training | CubeADM - Programming Zimbabwe',
-  description: 'Professional software engineering training in Zimbabwe. Learn programming, web development, and software best practices.',
+  title: 'Software Engineering Training Zimbabwe | Web Development, Programming | CubeADM',
+  description: 'Professional software engineering training in Zimbabwe. Learn Python, JavaScript, React, Node.js, full-stack development. Build real-world projects with expert instructors. Enroll at CubeADM Harare today!',
+  keywords: ['Software Engineering Training Zimbabwe', 'Programming Courses Harare', 'Web Development Training Zimbabwe', 'Python Training Zimbabwe', 'JavaScript Course Zimbabwe', 'Full Stack Developer Training Zimbabwe', 'React Training Zimbabwe', 'Coding Bootcamp Zimbabwe'],
+  openGraph: {
+    title: 'Software Engineering Training Zimbabwe | CubeADM',
+    description: 'Professional software engineering and web development training in Zimbabwe.',
+    url: 'https://cubeadm.co.zw/training/software',
+    type: 'website',
+  },
+  alternates: {
+    canonical: 'https://cubeadm.co.zw/training/software',
+  },
 }
 
 export default function SoftwareTrainingPage() {

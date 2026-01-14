@@ -4,8 +4,18 @@ import Image from 'next/image'
 import { Cpu, Award, Clock, Users, ArrowRight } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'AI & Automation Training | CubeADM - Artificial Intelligence Zimbabwe',
-  description: 'Professional AI and automation training in Zimbabwe. Learn machine learning, process automation, and AI tools.',
+  title: 'AI & Automation Training Zimbabwe | Machine Learning, ChatGPT | CubeADM',
+  description: 'Professional AI and automation training in Zimbabwe. Learn machine learning, ChatGPT, process automation, Python for AI, and data science. Future-proof your career with CubeADM Harare!',
+  keywords: ['AI Training Zimbabwe', 'Machine Learning Course Zimbabwe', 'Automation Training Harare', 'ChatGPT Training Zimbabwe', 'Artificial Intelligence Course Zimbabwe', 'Data Science Training Zimbabwe', 'Python AI Zimbabwe', 'RPA Training Zimbabwe'],
+  openGraph: {
+    title: 'AI & Automation Training Zimbabwe | CubeADM',
+    description: 'Professional AI and machine learning training in Zimbabwe.',
+    url: 'https://cubeadm.co.zw/training/ai-automation',
+    type: 'website',
+  },
+  alternates: {
+    canonical: 'https://cubeadm.co.zw/training/ai-automation',
+  },
 }
 
 export default function AIAutomationTrainingPage() {

@@ -4,8 +4,18 @@ import Image from 'next/image'
 import { Target, Eye, Lightbulb, Users, Award, Globe, ArrowRight, CheckCircle } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'About Us | CubeADM - Technology Training & IT Solutions Zimbabwe',
-  description: 'Learn about CubeADM, a leading technology training and IT solutions provider in Zimbabwe. Our mission, vision, and commitment to excellence.',
+  title: 'About CubeADM | Zimbabwe\'s Leading IT Training Academy & Solutions Provider',
+  description: 'CubeADM is Zimbabwe\'s premier IT training academy and solutions provider. Founded to empower Africa\'s digital future, we\'ve trained 500+ professionals with 95% certification pass rate. Based in Harare, serving Southern Africa.',
+  keywords: ['About CubeADM', 'IT Training Academy Zimbabwe', 'IT Company Harare', 'Technology Training Provider Zimbabwe', 'IT Solutions Company Zimbabwe', 'CubeADM Team', 'IT Training Institute Zimbabwe'],
+  openGraph: {
+    title: 'About CubeADM | Zimbabwe\'s Leading IT Training Academy',
+    description: 'Learn about CubeADM, Zimbabwe\'s premier IT training academy and solutions provider.',
+    url: 'https://cubeadm.co.zw/about',
+    type: 'website',
+  },
+  alternates: {
+    canonical: 'https://cubeadm.co.zw/about',
+  },
 }
 
 const values = [

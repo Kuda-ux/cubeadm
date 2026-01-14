@@ -18,8 +18,18 @@ import {
 } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'IT Solutions | CubeADM - Enterprise IT Infrastructure Zimbabwe',
-  description: 'Enterprise-grade IT solutions including network infrastructure, server solutions, and system integration for businesses in Zimbabwe.',
+  title: 'IT Solutions Zimbabwe | Enterprise Infrastructure, Servers & Networking | CubeADM',
+  description: 'CubeADM provides enterprise-grade IT solutions in Zimbabwe including server infrastructure (Dell, HPE), network design (Cisco, Huawei), data management, and system integration. 99.9% uptime guaranteed. Serving Harare and Southern Africa.',
+  keywords: ['IT Solutions Zimbabwe', 'Enterprise IT Infrastructure Harare', 'Server Solutions Zimbabwe', 'Network Infrastructure Zimbabwe', 'IT System Integration Zimbabwe', 'Dell Servers Zimbabwe', 'HPE Servers Zimbabwe', 'Cisco Networking Zimbabwe', 'Data Center Solutions Zimbabwe', 'IT Infrastructure Services Harare'],
+  openGraph: {
+    title: 'IT Solutions Zimbabwe | Enterprise Infrastructure | CubeADM',
+    description: 'Enterprise-grade IT solutions including servers, networking, and system integration for businesses in Zimbabwe.',
+    url: 'https://cubeadm.co.zw/services/it-solutions',
+    type: 'website',
+  },
+  alternates: {
+    canonical: 'https://cubeadm.co.zw/services/it-solutions',
+  },
 }
 
 const solutions = [

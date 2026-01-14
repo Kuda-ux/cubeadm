@@ -13,8 +13,18 @@ import {
 } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'IT Services | CubeADM - Enterprise IT Solutions Zimbabwe',
-  description: 'CubeADM offers enterprise-grade IT solutions including network infrastructure, cybersecurity, cloud services, and managed IT support in Zimbabwe.',
+  title: 'IT Services Zimbabwe | Cybersecurity, Cloud, Managed IT | CubeADM',
+  description: 'CubeADM offers comprehensive IT services in Zimbabwe: Cybersecurity (penetration testing, SOC), Cloud Services (AWS, Azure), Managed IT Support (24/7), Network Infrastructure, and Digital Transformation. Serving Harare and Southern Africa.',
+  keywords: ['IT Services Zimbabwe', 'Cybersecurity Services Harare', 'Cloud Services Zimbabwe', 'Managed IT Zimbabwe', 'IT Solutions Harare', 'Network Infrastructure Zimbabwe', 'IT Support Zimbabwe', 'Enterprise IT Services Zimbabwe'],
+  openGraph: {
+    title: 'IT Services Zimbabwe | CubeADM',
+    description: 'Comprehensive IT services: Cybersecurity, Cloud, Managed IT in Zimbabwe.',
+    url: 'https://cubeadm.co.zw/services',
+    type: 'website',
+  },
+  alternates: {
+    canonical: 'https://cubeadm.co.zw/services',
+  },
 }
 
 const services = [

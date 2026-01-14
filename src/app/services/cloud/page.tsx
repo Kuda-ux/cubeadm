@@ -18,8 +18,18 @@ import {
 } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Cloud Services | CubeADM - AWS & Azure Solutions Zimbabwe',
-  description: 'Cloud migration, AWS, Azure, and hybrid cloud solutions for businesses in Zimbabwe. Transform your infrastructure with CubeADM.',
+  title: 'Cloud Services Zimbabwe | AWS, Azure & Cloud Migration | CubeADM',
+  description: 'CubeADM provides expert cloud services in Zimbabwe: AWS, Microsoft Azure, Google Cloud migration, multi-cloud management, and cloud security. 40% cost reduction guaranteed. Serving Harare, Zimbabwe, and Southern Africa.',
+  keywords: ['Cloud Services Zimbabwe', 'AWS Zimbabwe', 'Azure Zimbabwe', 'Cloud Migration Zimbabwe', 'Cloud Computing Harare', 'Multi-Cloud Management Zimbabwe', 'Cloud Security Zimbabwe', 'Hybrid Cloud Zimbabwe', 'Cloud Consulting Zimbabwe', 'Google Cloud Zimbabwe', 'Cloud Infrastructure Zimbabwe'],
+  openGraph: {
+    title: 'Cloud Services Zimbabwe | AWS & Azure Solutions | CubeADM',
+    description: 'Cloud migration, AWS, Azure, and hybrid cloud solutions for businesses in Zimbabwe.',
+    url: 'https://cubeadm.co.zw/services/cloud',
+    type: 'website',
+  },
+  alternates: {
+    canonical: 'https://cubeadm.co.zw/services/cloud',
+  },
 }
 
 const services = [

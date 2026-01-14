@@ -4,8 +4,18 @@ import Image from 'next/image'
 import { Clock, Users, Award, ArrowRight, Star, BookOpen } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Training Programs | CubeADM - Technology Training Zimbabwe',
-  description: 'World-class technology training programs in Zimbabwe. Learn cybersecurity, cloud computing, networking, software engineering, and AI with industry-certified instructors.',
+  title: 'IT Training Courses Zimbabwe | Cybersecurity, Cloud, Networking Certifications | CubeADM',
+  description: 'CubeADM offers world-class IT training courses in Zimbabwe: Cybersecurity (CompTIA Security+, CEH), Cloud Computing (AWS, Azure), Cisco Networking (CCNA, CCNP), Software Engineering, and AI. Industry-certified instructors, hands-on labs, 95% pass rate. Enroll in Harare today!',
+  keywords: ['IT Training Zimbabwe', 'Cybersecurity Training Harare', 'AWS Training Zimbabwe', 'Azure Training Zimbabwe', 'CCNA Training Zimbabwe', 'CompTIA Training Zimbabwe', 'IT Certification Courses Zimbabwe', 'Technology Training Africa', 'IT Academy Zimbabwe', 'Cloud Computing Courses Harare', 'Networking Courses Zimbabwe'],
+  openGraph: {
+    title: 'IT Training Courses Zimbabwe | CubeADM Academy',
+    description: 'World-class IT training: Cybersecurity, Cloud Computing, Networking certifications in Zimbabwe.',
+    url: 'https://cubeadm.co.zw/training',
+    type: 'website',
+  },
+  alternates: {
+    canonical: 'https://cubeadm.co.zw/training',
+  },
 }
 
 const courses = [

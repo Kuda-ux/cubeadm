@@ -4,8 +4,18 @@ import Image from 'next/image'
 import { Shield, Award, Clock, Users, ArrowRight } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Cybersecurity Training | CubeADM - Security Certification Zimbabwe',
-  description: 'Professional cybersecurity training and certification programs in Zimbabwe. CompTIA Security+, ethical hacking, and more.',
+  title: 'Cybersecurity Training Zimbabwe | CompTIA Security+, CEH Certification | CubeADM',
+  description: 'Professional cybersecurity training in Zimbabwe. CompTIA Security+, Certified Ethical Hacker (CEH), penetration testing, incident response courses. Hands-on labs, certified instructors, 95% pass rate. Enroll at CubeADM Harare today!',
+  keywords: ['Cybersecurity Training Zimbabwe', 'CompTIA Security+ Zimbabwe', 'CEH Training Harare', 'Ethical Hacking Course Zimbabwe', 'Penetration Testing Training Zimbabwe', 'Security Certification Zimbabwe', 'Cybersecurity Courses Harare', 'IT Security Training Africa', 'Cyber Defense Training Zimbabwe'],
+  openGraph: {
+    title: 'Cybersecurity Training Zimbabwe | CompTIA Security+ | CubeADM',
+    description: 'Professional cybersecurity training and certification programs in Zimbabwe.',
+    url: 'https://cubeadm.co.zw/training/cybersecurity',
+    type: 'website',
+  },
+  alternates: {
+    canonical: 'https://cubeadm.co.zw/training/cybersecurity',
+  },
 }
 
 export default function CybersecurityTrainingPage() {

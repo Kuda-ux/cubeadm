@@ -4,8 +4,18 @@ import Image from 'next/image'
 import { Cloud, Award, Clock, Users, ArrowRight } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Cloud Computing Training | CubeADM - AWS & Azure Certification Zimbabwe',
-  description: 'Professional cloud computing training in Zimbabwe. AWS Solutions Architect, Azure Administrator certification preparation.',
+  title: 'Cloud Computing Training Zimbabwe | AWS & Azure Certification | CubeADM',
+  description: 'Professional cloud computing training in Zimbabwe. AWS Solutions Architect, Azure Administrator, Google Cloud certifications. Hands-on labs, real-world projects, certified instructors. Enroll at CubeADM Harare today!',
+  keywords: ['Cloud Computing Training Zimbabwe', 'AWS Training Zimbabwe', 'Azure Training Harare', 'AWS Solutions Architect Zimbabwe', 'Azure Administrator Zimbabwe', 'Google Cloud Training Zimbabwe', 'Cloud Certification Zimbabwe', 'Cloud Courses Harare', 'DevOps Training Zimbabwe'],
+  openGraph: {
+    title: 'Cloud Computing Training Zimbabwe | AWS & Azure | CubeADM',
+    description: 'Professional cloud computing training: AWS, Azure, Google Cloud certifications in Zimbabwe.',
+    url: 'https://cubeadm.co.zw/training/cloud',
+    type: 'website',
+  },
+  alternates: {
+    canonical: 'https://cubeadm.co.zw/training/cloud',
+  },
 }
 
 export default function CloudTrainingPage() {

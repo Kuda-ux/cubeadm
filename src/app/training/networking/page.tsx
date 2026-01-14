@@ -4,8 +4,18 @@ import Image from 'next/image'
 import { Network, Award, Clock, Users, ArrowRight } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Networking Training | CubeADM - CCNA Certification Zimbabwe',
-  description: 'Professional Cisco networking training in Zimbabwe. CCNA certification preparation with hands-on labs.',
+  title: 'Networking Training Zimbabwe | Cisco CCNA, CCNP Certification | CubeADM',
+  description: 'Professional Cisco networking training in Zimbabwe. CCNA, CCNP certification preparation with hands-on labs, real Cisco equipment. CompTIA Network+ also available. Enroll at CubeADM Harare today!',
+  keywords: ['Networking Training Zimbabwe', 'CCNA Training Zimbabwe', 'CCNP Training Harare', 'Cisco Training Zimbabwe', 'CompTIA Network+ Zimbabwe', 'Network Engineering Course Zimbabwe', 'Routing Switching Training Zimbabwe', 'IT Networking Courses Harare'],
+  openGraph: {
+    title: 'Networking Training Zimbabwe | Cisco CCNA | CubeADM',
+    description: 'Professional Cisco networking training: CCNA, CCNP certification in Zimbabwe.',
+    url: 'https://cubeadm.co.zw/training/networking',
+    type: 'website',
+  },
+  alternates: {
+    canonical: 'https://cubeadm.co.zw/training/networking',
+  },
 }
 
 export default function NetworkingTrainingPage() {

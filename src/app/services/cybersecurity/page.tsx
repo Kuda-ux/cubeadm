@@ -19,8 +19,18 @@ import {
 } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Cybersecurity Services | CubeADM - Security Solutions Zimbabwe',
-  description: 'Comprehensive cybersecurity services including penetration testing, security audits, and 24/7 monitoring for businesses in Zimbabwe.',
+  title: 'Cybersecurity Services Zimbabwe | Penetration Testing, Security Audits | CubeADM',
+  description: 'CubeADM offers comprehensive cybersecurity services in Zimbabwe: penetration testing, security audits, 24/7 SOC monitoring, incident response, and compliance (ISO 27001, GDPR). Protect your business from cyber threats. Serving Harare and Southern Africa.',
+  keywords: ['Cybersecurity Services Zimbabwe', 'Penetration Testing Zimbabwe', 'Security Audit Harare', 'SOC Services Zimbabwe', 'Incident Response Zimbabwe', 'Ethical Hacking Zimbabwe', 'Network Security Zimbabwe', 'Cyber Threat Protection Zimbabwe', 'ISO 27001 Compliance Zimbabwe', 'GDPR Compliance Zimbabwe', 'Cybersecurity Company Harare'],
+  openGraph: {
+    title: 'Cybersecurity Services Zimbabwe | Penetration Testing | CubeADM',
+    description: 'Comprehensive cybersecurity services including penetration testing, security audits, and 24/7 monitoring for businesses in Zimbabwe.',
+    url: 'https://cubeadm.co.zw/services/cybersecurity',
+    type: 'website',
+  },
+  alternates: {
+    canonical: 'https://cubeadm.co.zw/services/cybersecurity',
+  },
 }
 
 const services = [
