@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { 
@@ -11,8 +12,10 @@ import {
   Mail,
   Phone,
   MapPin,
-  ArrowRight
+  ArrowRight,
+  CheckCircle
 } from 'lucide-react'
+import { supabase } from '@/lib/supabase'
 
 const footerLinks = {
   services: [
@@ -52,6 +55,27 @@ const socialLinks = [
 ]
 
 export default function Footer() {
+  const [email, setEmail] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [subscribed, setSubscribed] = useState(false)
+
+  const handleNewsletterSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!email) return
+
+    setIsSubmitting(true)
+    try {
+      const { error } = await supabase.from('newsletter_subscribers').insert({ email })
+      if (error) throw error
+      setSubscribed(true)
+      setEmail('')
+    } catch (error) {
+      console.error('Newsletter subscription error:', error)
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
   return (
     <footer className="bg-[#01124b]">
       <div>
@@ -68,20 +92,31 @@ export default function Footer() {
                     Get exclusive insights, training updates, and industry news delivered to your inbox.
                   </p>
                 </div>
-                <form className="flex flex-col sm:flex-row w-full lg:w-auto gap-3">
+                {subscribed ? (
+                  <div className="flex items-center gap-3 text-green-400">
+                    <CheckCircle className="w-6 h-6" />
+                    <span className="font-medium">Thanks for subscribing!</span>
+                  </div>
+                ) : (
+                <form onSubmit={handleNewsletterSubmit} className="flex flex-col sm:flex-row w-full lg:w-auto gap-3">
                   <input
                     type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     placeholder="Enter your email"
+                    required
                     className="flex-1 lg:w-80 px-6 py-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-white placeholder-gray-400 focus:outline-none focus:border-[#005CFF] focus:ring-2 focus:ring-[#005CFF]/20 transition-all"
                   />
                   <button
                     type="submit"
-                    className="px-8 py-4 bg-gradient-to-r from-[#005CFF] to-[#00D4FF] text-white font-bold rounded-full hover:shadow-lg hover:shadow-[#005CFF]/30 transition-all duration-300 flex items-center justify-center gap-2 whitespace-nowrap group"
+                    disabled={isSubmitting}
+                    className="px-8 py-4 bg-gradient-to-r from-[#005CFF] to-[#00D4FF] text-white font-bold rounded-full hover:shadow-lg hover:shadow-[#005CFF]/30 transition-all duration-300 flex items-center justify-center gap-2 whitespace-nowrap group disabled:opacity-50"
                   >
-                    Subscribe
+                    {isSubmitting ? 'Subscribing...' : 'Subscribe'}
                     <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                   </button>
                 </form>
+                )}
               </div>
             </div>
           </div>

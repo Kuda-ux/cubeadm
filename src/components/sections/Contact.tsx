@@ -1,7 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { Mail, Phone, MapPin, Send, Clock, MessageSquare } from 'lucide-react'
+import { Mail, Phone, MapPin, Send, Clock, MessageSquare, CheckCircle, AlertCircle } from 'lucide-react'
+import { supabase } from '@/lib/supabase'
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -12,10 +13,33 @@ export default function Contact() {
     service: '',
     message: '',
   })
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    console.log('Form submitted:', formData)
+    setIsSubmitting(true)
+    setSubmitStatus('idle')
+
+    try {
+      const { error } = await supabase.from('contacts').insert({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone || null,
+        company: formData.company || null,
+        message: `Service: ${formData.service}\n\n${formData.message}`,
+      })
+
+      if (error) throw error
+
+      setSubmitStatus('success')
+      setFormData({ name: '', email: '', phone: '', company: '', service: '', message: '' })
+    } catch (error) {
+      console.error('Error submitting form:', error)
+      setSubmitStatus('error')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -195,11 +219,26 @@ export default function Contact() {
                 />
               </div>
 
+              {submitStatus === 'success' && (
+                <div className="mb-6 p-4 bg-green-500/10 border border-green-500/20 rounded-lg flex items-center gap-3">
+                  <CheckCircle className="w-5 h-5 text-green-500" />
+                  <p className="text-green-400">Thank you! Your message has been sent successfully.</p>
+                </div>
+              )}
+
+              {submitStatus === 'error' && (
+                <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-lg flex items-center gap-3">
+                  <AlertCircle className="w-5 h-5 text-red-500" />
+                  <p className="text-red-400">Something went wrong. Please try again.</p>
+                </div>
+              )}
+
               <button
                 type="submit"
-                className="btn-primary w-full md:w-auto flex items-center justify-center gap-2"
+                disabled={isSubmitting}
+                className="btn-primary w-full md:w-auto flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Send Message
+                {isSubmitting ? 'Sending...' : 'Send Message'}
                 <Send className="w-5 h-5" />
               </button>
             </form>
