@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 import { 
   Sparkles, 
   Server, 
@@ -428,9 +429,11 @@ export default function ProductsPage() {
                     </div>
 
                     <div className="p-5">
-                      <h3 className="text-lg font-bold text-white mb-2 group-hover:text-[#00D4FF] transition-colors line-clamp-1">
-                        {product.name}
-                      </h3>
+                      <Link href={`/products/${product.id}`}>
+                        <h3 className="text-lg font-bold text-white mb-2 group-hover:text-[#00D4FF] transition-colors line-clamp-1 cursor-pointer">
+                          {product.name}
+                        </h3>
+                      </Link>
                       <p className="text-gray-400 text-sm mb-4 line-clamp-2">
                         {product.description}
                       </p>
