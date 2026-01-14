@@ -57,6 +57,12 @@ ALTER TABLE newsletter_subscribers ENABLE ROW LEVEL SECURITY;
 ALTER TABLE quote_requests ENABLE ROW LEVEL SECURITY;
 
 -- Create policies to allow anonymous inserts (for form submissions)
+-- Drop existing policies first to avoid conflicts
+DROP POLICY IF EXISTS "Allow anonymous inserts" ON contacts;
+DROP POLICY IF EXISTS "Allow anonymous inserts" ON enrollments;
+DROP POLICY IF EXISTS "Allow anonymous inserts" ON newsletter_subscribers;
+DROP POLICY IF EXISTS "Allow anonymous inserts" ON quote_requests;
+
 CREATE POLICY "Allow anonymous inserts" ON contacts FOR INSERT WITH CHECK (true);
 CREATE POLICY "Allow anonymous inserts" ON enrollments FOR INSERT WITH CHECK (true);
 CREATE POLICY "Allow anonymous inserts" ON newsletter_subscribers FOR INSERT WITH CHECK (true);
@@ -107,6 +113,15 @@ CREATE TABLE IF NOT EXISTS orders (
 ALTER TABLE products ENABLE ROW LEVEL SECURITY;
 ALTER TABLE cart_items ENABLE ROW LEVEL SECURITY;
 ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
+
+-- Drop existing policies first to avoid conflicts
+DROP POLICY IF EXISTS "Anyone can view products" ON products;
+DROP POLICY IF EXISTS "Users can view own cart" ON cart_items;
+DROP POLICY IF EXISTS "Users can add to own cart" ON cart_items;
+DROP POLICY IF EXISTS "Users can update own cart" ON cart_items;
+DROP POLICY IF EXISTS "Users can delete from own cart" ON cart_items;
+DROP POLICY IF EXISTS "Users can view own orders" ON orders;
+DROP POLICY IF EXISTS "Users can create orders" ON orders;
 
 -- Products: Anyone can read
 CREATE POLICY "Anyone can view products" ON products FOR SELECT USING (true);
