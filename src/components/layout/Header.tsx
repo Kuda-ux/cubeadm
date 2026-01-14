@@ -105,39 +105,49 @@ export default function Header() {
             {navigation.map((item) => (
               <div
                 key={item.name}
-                className="relative group"
+                className="relative"
                 onMouseEnter={() => item.submenu && setActiveDropdown(item.name)}
                 onMouseLeave={() => setActiveDropdown(null)}
               >
                 <Link
                   href={item.href}
                   className={cn(
-                    'relative px-3 py-2 text-sm font-bold tracking-wide transition-all duration-300 flex items-center gap-1',
+                    'relative px-3 py-4 text-sm font-bold tracking-wide transition-all duration-300 flex items-center gap-1',
                     'text-[#005CFF] hover:text-[#0070FF]',
-                    'after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:w-0 after:h-0.5 after:bg-[#005CFF] after:transition-all after:duration-300',
+                    'after:absolute after:bottom-2 after:left-1/2 after:-translate-x-1/2 after:w-0 after:h-0.5 after:bg-[#005CFF] after:transition-all after:duration-300',
                     'hover:after:w-3/4'
                   )}
                 >
                   {item.name}
                   {item.submenu && (
-                    <ChevronDown className="w-4 h-4 transition-transform duration-300 group-hover:rotate-180" />
+                    <ChevronDown className={cn(
+                      "w-4 h-4 transition-transform duration-300",
+                      activeDropdown === item.name && "rotate-180"
+                    )} />
                   )}
                 </Link>
 
                 {/* Dropdown Menu */}
                 {item.submenu && activeDropdown === item.name && (
-                  <div className="absolute top-full left-0 mt-2 w-56 bg-[#FFFFFF] rounded-xl shadow-[0_10px_40px_rgba(0,92,255,0.12)] border border-gray-100 overflow-hidden animate-fade-in">
-                    <div className="p-2">
-                      {item.submenu.map((subItem) => (
-                        <Link
-                          key={subItem.name}
-                          href={subItem.href}
-                          className="flex items-center gap-3 px-4 py-2.5 text-sm text-[#005CFF] hover:bg-[#005CFF]/5 rounded-lg transition-all duration-200 group/item font-semibold"
-                        >
-                          <span className="w-1.5 h-1.5 rounded-full bg-[#005CFF] opacity-0 group-hover/item:opacity-100 transition-opacity" />
-                          <span>{subItem.name}</span>
-                        </Link>
-                      ))}
+                  <div 
+                    className="absolute top-full left-0 pt-0 w-56"
+                    onMouseEnter={() => setActiveDropdown(item.name)}
+                    onMouseLeave={() => setActiveDropdown(null)}
+                  >
+                    <div className="bg-[#FFFFFF] rounded-xl shadow-[0_10px_40px_rgba(0,92,255,0.12)] border border-gray-100 overflow-hidden">
+                      <div className="p-2">
+                        {item.submenu.map((subItem) => (
+                          <Link
+                            key={subItem.name}
+                            href={subItem.href}
+                            className="flex items-center gap-3 px-4 py-2.5 text-sm text-[#005CFF] hover:bg-[#005CFF]/5 rounded-lg transition-all duration-200 group/item font-semibold"
+                            onClick={() => setActiveDropdown(null)}
+                          >
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#005CFF] opacity-0 group-hover/item:opacity-100 transition-opacity" />
+                            <span>{subItem.name}</span>
+                          </Link>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 )}

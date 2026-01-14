@@ -1,6 +1,5 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
-import Image from 'next/image'
 import { 
   Shield, 
   Lock, 
@@ -136,15 +135,19 @@ export default function CybersecurityPage() {
               </div>
             </div>
 
-            <div className="relative">
-              <div className="relative z-10">
-                <Image 
-                  src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=600&q=80" 
-                  alt="Cybersecurity" 
-                  width={600} 
-                  height={400} 
-                  className="rounded-3xl shadow-2xl shadow-[#005CFF]/20"
-                />
+            {/* Animated Graphics */}
+            <div className="relative flex items-center justify-center">
+              {/* Central Icon */}
+              <div className="relative w-64 h-64 flex items-center justify-center">
+                {/* Animated shield rings */}
+                <div className="absolute inset-0 border-2 border-red-500/20 rounded-full animate-pulse" />
+                <div className="absolute inset-4 border-2 border-[#005CFF]/30 rounded-full animate-ping" style={{ animationDuration: '3s' }} />
+                <div className="absolute inset-8 border-2 border-[#00D4FF]/40 rounded-full animate-pulse" style={{ animationDuration: '2s' }} />
+                
+                {/* Center icon */}
+                <div className="w-32 h-32 bg-gradient-to-br from-[#005CFF] to-[#00D4FF] rounded-3xl flex items-center justify-center shadow-2xl shadow-[#005CFF]/30">
+                  <Shield className="w-16 h-16 text-white" />
+                </div>
               </div>
               
               {/* Floating Cards */}
