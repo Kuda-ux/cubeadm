@@ -130,6 +130,118 @@ export type Database = {
           status?: 'new' | 'contacted' | 'quoted' | 'closed'
         }
       }
+      products: {
+        Row: {
+          id: string
+          created_at: string
+          name: string
+          category: 'computing' | 'networking' | 'servers' | 'cloud'
+          brand: string
+          description: string
+          image_url: string
+          price: number
+          rating: number
+          in_stock: boolean
+          featured: boolean
+          specs: Record<string, unknown> | null
+        }
+        Insert: {
+          id?: string
+          created_at?: string
+          name: string
+          category: 'computing' | 'networking' | 'servers' | 'cloud'
+          brand: string
+          description: string
+          image_url: string
+          price: number
+          rating?: number
+          in_stock?: boolean
+          featured?: boolean
+          specs?: Record<string, unknown> | null
+        }
+        Update: {
+          id?: string
+          created_at?: string
+          name?: string
+          category?: 'computing' | 'networking' | 'servers' | 'cloud'
+          brand?: string
+          description?: string
+          image_url?: string
+          price?: number
+          rating?: number
+          in_stock?: boolean
+          featured?: boolean
+          specs?: Record<string, unknown> | null
+        }
+      }
+      cart_items: {
+        Row: {
+          id: string
+          created_at: string
+          user_id: string
+          product_id: string
+          quantity: number
+        }
+        Insert: {
+          id?: string
+          created_at?: string
+          user_id: string
+          product_id: string
+          quantity?: number
+        }
+        Update: {
+          id?: string
+          created_at?: string
+          user_id?: string
+          product_id?: string
+          quantity?: number
+        }
+      }
+      orders: {
+        Row: {
+          id: string
+          created_at: string
+          user_id: string
+          user_email: string
+          user_name: string
+          user_phone: string | null
+          company: string | null
+          items: Array<{ product_id: string; name: string; price: number; quantity: number }>
+          total: number
+          status: 'pending' | 'confirmed' | 'processing' | 'completed' | 'cancelled'
+          notes: string | null
+        }
+        Insert: {
+          id?: string
+          created_at?: string
+          user_id: string
+          user_email: string
+          user_name: string
+          user_phone?: string | null
+          company?: string | null
+          items: Array<{ product_id: string; name: string; price: number; quantity: number }>
+          total: number
+          status?: 'pending' | 'confirmed' | 'processing' | 'completed' | 'cancelled'
+          notes?: string | null
+        }
+        Update: {
+          id?: string
+          created_at?: string
+          user_id?: string
+          user_email?: string
+          user_name?: string
+          user_phone?: string | null
+          company?: string | null
+          items?: Array<{ product_id: string; name: string; price: number; quantity: number }>
+          total?: number
+          status?: 'pending' | 'confirmed' | 'processing' | 'completed' | 'cancelled'
+          notes?: string | null
+        }
+      }
     }
   }
 }
+
+export type Product = Database['public']['Tables']['products']['Row']
+export type CartItem = Database['public']['Tables']['cart_items']['Row'] & { product?: Product }
+export type Order = Database['public']['Tables']['orders']['Row']
