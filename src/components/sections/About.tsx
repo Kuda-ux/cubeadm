@@ -34,8 +34,8 @@ export default function About() {
             </span>
           </h2>
           <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-            A modern, future-focused technology training and IT solutions company 
-            delivering world-class digital training and enterprise solutions.
+            A modern, future-focused technology company delivering world-class training, 
+            enterprise IT solutions, and premium hardware from leading global brands.
           </p>
         </div>
 

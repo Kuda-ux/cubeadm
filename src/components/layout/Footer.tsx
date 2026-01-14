@@ -23,26 +23,24 @@ const footerLinks = {
     { name: 'Cybersecurity', href: '/services/cybersecurity' },
     { name: 'Cloud Services', href: '/services/cloud' },
     { name: 'Managed IT', href: '/services/managed-it' },
-    { name: 'Digital Transformation', href: '/services/digital-transformation' },
+  ],
+  products: [
+    { name: 'End-User Computing', href: '/products?category=computing' },
+    { name: 'Networking Equipment', href: '/products?category=networking' },
+    { name: 'Servers & Storage', href: '/products?category=servers' },
+    { name: 'Cloud Infrastructure', href: '/products?category=cloud' },
   ],
   training: [
     { name: 'Cybersecurity Training', href: '/training/cybersecurity' },
     { name: 'Cloud Computing', href: '/training/cloud' },
     { name: 'Networking (Cisco)', href: '/training/networking' },
     { name: 'Software Engineering', href: '/training/software' },
-    { name: 'AI & Automation', href: '/training/ai-automation' },
   ],
   company: [
     { name: 'About Us', href: '/about' },
-    { name: 'Portfolio', href: '/portfolio' },
-    { name: 'Blog', href: '/blog' },
+    { name: 'Products', href: '/products' },
     { name: 'Careers', href: '/careers' },
     { name: 'Contact', href: '/contact' },
-  ],
-  legal: [
-    { name: 'Privacy Policy', href: '/privacy' },
-    { name: 'Terms of Service', href: '/terms' },
-    { name: 'Cookie Policy', href: '/cookies' },
   ],
 }
 
@@ -185,10 +183,30 @@ export default function Footer() {
               </ul>
             </div>
 
-            {/* Training Links */}
+            {/* Products Links */}
             <div>
               <h4 className="text-white font-bold text-lg mb-6 flex items-center gap-2">
                 <span className="w-2 h-2 bg-[#00D4FF] rounded-full" />
+                Products
+              </h4>
+              <ul className="space-y-4">
+                {footerLinks.products.map((link) => (
+                  <li key={link.name}>
+                    <Link 
+                      href={link.href} 
+                      className="text-gray-400 hover:text-white hover:translate-x-1 transition-all duration-200 inline-block text-sm font-medium"
+                    >
+                      {link.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Training Links */}
+            <div>
+              <h4 className="text-white font-bold text-lg mb-6 flex items-center gap-2">
+                <span className="w-2 h-2 bg-[#005CFF] rounded-full" />
                 Training
               </h4>
               <ul className="space-y-4">
@@ -208,31 +226,11 @@ export default function Footer() {
             {/* Company Links */}
             <div>
               <h4 className="text-white font-bold text-lg mb-6 flex items-center gap-2">
-                <span className="w-2 h-2 bg-[#005CFF] rounded-full" />
+                <span className="w-2 h-2 bg-[#00D4FF] rounded-full" />
                 Company
               </h4>
               <ul className="space-y-4">
                 {footerLinks.company.map((link) => (
-                  <li key={link.name}>
-                    <Link 
-                      href={link.href} 
-                      className="text-gray-400 hover:text-white hover:translate-x-1 transition-all duration-200 inline-block text-sm font-medium"
-                    >
-                      {link.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Legal Links */}
-            <div>
-              <h4 className="text-white font-bold text-lg mb-6 flex items-center gap-2">
-                <span className="w-2 h-2 bg-[#00D4FF] rounded-full" />
-                Legal
-              </h4>
-              <ul className="space-y-4">
-                {footerLinks.legal.map((link) => (
                   <li key={link.name}>
                     <Link 
                       href={link.href} 

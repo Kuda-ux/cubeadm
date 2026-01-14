@@ -29,9 +29,17 @@ const navigation = [
       { name: 'AI & Automation', href: '/training/ai-automation' },
     ]
   },
+  { 
+    name: 'PRODUCTS', 
+    href: '/products',
+    submenu: [
+      { name: 'End-User Computing', href: '/products?category=computing' },
+      { name: 'Networking Equipment', href: '/products?category=networking' },
+      { name: 'Servers & Storage', href: '/products?category=servers' },
+      { name: 'Cloud Infrastructure', href: '/products?category=cloud' },
+    ]
+  },
   { name: 'ABOUT', href: '/about' },
-  { name: 'PORTFOLIO', href: '/portfolio' },
-  { name: 'BLOG', href: '/blog' },
   { name: 'CONTACT', href: '/contact' },
 ]
 
