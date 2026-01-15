@@ -38,8 +38,8 @@ const footerLinks = {
   ],
   company: [
     { name: 'About Us', href: '/about' },
+    { name: 'Blog', href: '/blog' },
     { name: 'Products', href: '/products' },
-    { name: 'Careers', href: '/careers' },
     { name: 'Contact', href: '/contact' },
   ],
 }
@@ -148,11 +148,11 @@ export default function Footer() {
                   </div>
                   <span className="font-medium">info@cubeadm.co.zw</span>
                 </a>
-                <a href="tel:+263771234567" className="flex items-center gap-4 text-gray-300 hover:text-[#00D4FF] transition-colors group">
+                <a href="tel:+263782667295" className="flex items-center gap-4 text-gray-300 hover:text-[#00D4FF] transition-colors group">
                   <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center group-hover:bg-[#005CFF]/20 transition-colors">
                     <Phone className="w-5 h-5" />
                   </div>
-                  <span className="font-medium">+263 77 123 4567</span>
+                  <span className="font-medium">+263 78 266 7295</span>
                 </a>
                 <div className="flex items-center gap-4 text-gray-300">
                   <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center">

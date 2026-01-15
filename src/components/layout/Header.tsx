@@ -72,7 +72,7 @@ export default function Header() {
             <div className="flex items-center gap-6">
               <span className="flex items-center gap-1.5 font-medium">
                 <Phone className="w-3 h-3" />
-                +263 77 123 4567
+                +263 78 266 7295
               </span>
               <span className="font-medium">info@cubeadm.co.zw</span>
             </div>

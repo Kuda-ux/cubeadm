@@ -96,14 +96,14 @@ At CubeADM, we understand the unique cybersecurity challenges facing Zimbabwean 
 
 Don't wait for a breach to take cybersecurity seriously. Contact CubeADM for a free security assessment and learn how we can protect your business from these evolving threats.
 
-**Call us:** +263 77 123 4567
-**Email:** security@cubeadm.co.zw
+**Call us:** +263 78 266 7295
+**Email:** info@cubeadm.co.zw
     `,
     image: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=1200&q=80',
     author: {
-      name: 'John Mutasa',
-      role: 'Chief Security Officer',
-      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&q=80',
+      name: 'Admin',
+      role: 'CubeADM Team',
+      avatar: 'https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=150&q=80',
     },
     date: 'January 10, 2025',
     readTime: '12 min read',
@@ -213,14 +213,14 @@ Choosing the right cloud platform is a critical decision. At CubeADM, we're cert
 
 **Ready to move to the cloud?** Contact us for a free cloud readiness assessment.
 
-**Call:** +263 77 123 4567
-**Email:** cloud@cubeadm.co.zw
+**Call:** +263 78 266 7295
+**Email:** info@cubeadm.co.zw
     `,
     image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&q=80',
     author: {
-      name: 'Sarah Chikwanha',
-      role: 'Cloud Solutions Architect',
-      avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&q=80',
+      name: 'Admin',
+      role: 'CubeADM Team',
+      avatar: 'https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=150&q=80',
     },
     date: 'January 8, 2025',
     readTime: '10 min read',
@@ -362,8 +362,8 @@ At CubeADM, we offer the most comprehensive CCNA training in Zimbabwe:
 Don't let another year pass without investing in your career. The CCNA certification is your ticket to better opportunities—in Zimbabwe and beyond.
 
 **Enroll Now:**
-- **Phone:** +263 77 123 4567
-- **Email:** training@cubeadm.co.zw
+- **Phone:** +263 78 266 7295
+- **Email:** info@cubeadm.co.zw
 - **Visit:** Our Harare training center
 
 **Next intake starts:** February 2025
@@ -371,9 +371,9 @@ Don't let another year pass without investing in your career. The CCNA certifica
     `,
     image: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=1200&q=80',
     author: {
-      name: 'Michael Ndlovu',
-      role: 'Senior Network Instructor',
-      avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&q=80',
+      name: 'Admin',
+      role: 'CubeADM Team',
+      avatar: 'https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=150&q=80',
     },
     date: 'January 5, 2025',
     readTime: '15 min read',
@@ -499,16 +499,16 @@ The businesses that thrive in the next decade will be those that effectively lev
 **Ready to explore AI for your business?**
 
 **Contact CubeADM:**
-- **Phone:** +263 77 123 4567
-- **Email:** ai@cubeadm.co.zw
+- **Phone:** +263 78 266 7295
+- **Email:** info@cubeadm.co.zw
 
 Let's build Zimbabwe's AI future together.
     `,
     image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=1200&q=80',
     author: {
-      name: 'Grace Moyo',
-      role: 'AI & Automation Lead',
-      avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&q=80',
+      name: 'Admin',
+      role: 'CubeADM Team',
+      avatar: 'https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=150&q=80',
     },
     date: 'January 3, 2025',
     readTime: '11 min read',
@@ -691,8 +691,8 @@ At CubeADM, we've helped hundreds of Zimbabweans launch successful IT careers:
 Your IT career starts with a single step. Whether you're a fresh graduate, career changer, or someone looking to upskill, CubeADM is here to guide you.
 
 **Contact Us:**
-- **Phone:** +263 77 123 4567
-- **Email:** careers@cubeadm.co.zw
+- **Phone:** +263 78 266 7295
+- **Email:** info@cubeadm.co.zw
 - **Visit:** Our Harare training center
 
 **Free Career Consultation Available!**
@@ -701,9 +701,9 @@ Don't wait for the perfect moment. Start your IT journey today.
     `,
     image: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?w=1200&q=80',
     author: {
-      name: 'John Mutasa',
-      role: 'CEO & Founder',
-      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&q=80',
+      name: 'Admin',
+      role: 'CubeADM Team',
+      avatar: 'https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=150&q=80',
     },
     date: 'December 28, 2024',
     readTime: '14 min read',
@@ -863,17 +863,17 @@ Stop letting IT problems hold your business back. Let CubeADM handle your techno
 We'll evaluate your current IT setup and provide recommendations—no obligation.
 
 **Contact Us:**
-- **Phone:** +263 77 123 4567
-- **Email:** managed@cubeadm.co.zw
+- **Phone:** +263 78 266 7295
+- **Email:** info@cubeadm.co.zw
 - **Website:** cubeadm.co.zw/services/managed-it
 
 Your business deserves reliable IT. Let's make it happen.
     `,
     image: 'https://images.unsplash.com/photo-1597852074816-d933c7d2b988?w=1200&q=80',
     author: {
-      name: 'Sarah Chikwanha',
-      role: 'Head of Managed Services',
-      avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&q=80',
+      name: 'Admin',
+      role: 'CubeADM Team',
+      avatar: 'https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=150&q=80',
     },
     date: 'December 20, 2024',
     readTime: '10 min read',

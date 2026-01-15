@@ -43,7 +43,7 @@ export default function CookiesPage() {
             <p className="text-gray-600 mb-4">
               If you have any questions about our Cookie Policy, please contact us at:<br />
               Email: info@cubeadm.co.zw<br />
-              Phone: +263 77 123 4567
+              Phone: +263 78 266 7295
             </p>
           </div>
         </div>

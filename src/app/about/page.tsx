@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Target, Eye, Lightbulb, Users, Award, Globe, ArrowRight, CheckCircle } from 'lucide-react'
+import { Target, Eye, Lightbulb, Users, Award, Globe, ArrowRight, CheckCircle, Rocket, Shield, Zap, TrendingUp } from 'lucide-react'
 
 export const metadata: Metadata = {
   title: 'About CubeADM | Zimbabwe\'s Leading IT Training Academy & Solutions Provider',
@@ -25,11 +25,13 @@ const values = [
   { icon: Globe, title: 'Impact', description: 'Creating lasting positive change in Zimbabwe and across Africa.' },
 ]
 
-const team = [
-  { name: 'John Mutasa', role: 'CEO & Founder', image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&q=80' },
-  { name: 'Sarah Chikwanha', role: 'Head of Training', image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300&q=80' },
-  { name: 'Michael Ndlovu', role: 'CTO', image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&q=80' },
-  { name: 'Grace Moyo', role: 'Operations Director', image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=300&q=80' },
+const milestones = [
+  { year: '2020', title: 'Foundation', description: 'CubeADM was founded with a vision to transform IT education in Zimbabwe.' },
+  { year: '2021', title: 'First 100 Graduates', description: 'Celebrated our first 100 certified IT professionals entering the workforce.' },
+  { year: '2022', title: 'Enterprise Solutions', description: 'Expanded into enterprise IT solutions, serving major corporations.' },
+  { year: '2023', title: 'Regional Expansion', description: 'Extended our reach to serve clients across Southern Africa.' },
+  { year: '2024', title: '500+ Professionals', description: 'Trained over 500 IT professionals with 95% certification pass rate.' },
+  { year: '2025', title: 'Innovation Hub', description: 'Launching our AI and Cloud Innovation Hub for next-gen training.' },
 ]
 
 export default function AboutPage() {
@@ -95,59 +97,134 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Story */}
-      <section className="section-padding bg-dark-900">
-        <div className="container-custom mx-auto">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="relative rounded-2xl overflow-hidden">
-              <Image
-                src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&q=80"
-                alt="CubeADM Team"
-                width={600}
-                height={400}
-                className="w-full h-auto object-cover"
-              />
+      {/* Our Story - World Class Design */}
+      <section className="py-20 lg:py-28 bg-gradient-to-b from-[#0a0a0a] to-[#0d1117] relative overflow-hidden">
+        {/* Background Elements */}
+        <div className="absolute top-0 left-0 w-96 h-96 bg-[#005CFF]/5 rounded-full blur-[150px]" />
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#00D4FF]/5 rounded-full blur-[150px]" />
+        
+        <div className="container-custom mx-auto px-4 relative z-10">
+          {/* Section Header */}
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#005CFF]/10 border border-[#005CFF]/20 rounded-full mb-6">
+              <Rocket className="w-4 h-4 text-[#00D4FF]" />
+              <span className="text-[#00D4FF] font-medium text-sm">Our Journey</span>
             </div>
-            <div>
-              <h2 className="heading-lg text-white mb-6">Our Story</h2>
-              <p className="text-gray-400 mb-4 leading-relaxed">
-                Founded with a vision to bridge the technology skills gap in Zimbabwe and Africa, CubeADM has grown 
-                from a small training center to a comprehensive technology solutions provider.
-              </p>
-              <p className="text-gray-400 mb-6 leading-relaxed">
-                We align our standards with global industry leaders like Cisco, IBM, Oracle, Palo Alto Networks, and AWS. 
-                Our approach combines international best practices with deep understanding of local business needs.
-              </p>
-              <ul className="space-y-3">
-                {['Industry-certified instructors and consultants', 'Hands-on, practical training methodology', 'Enterprise-grade IT solutions', 'Proven track record with leading organizations'].map((item) => (
-                  <li key={item} className="flex items-center gap-3 text-gray-300">
-                    <CheckCircle className="w-5 h-5 text-primary-500" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6">
+              Building Africa&apos;s{' '}
+              <span className="bg-gradient-to-r from-[#005CFF] to-[#00D4FF] bg-clip-text text-transparent">
+                Digital Future
+              </span>
+            </h2>
+            <p className="text-gray-400 text-lg max-w-3xl mx-auto leading-relaxed">
+              From a bold vision to transform IT education in Zimbabwe, CubeADM has evolved into a comprehensive 
+              technology powerhouse. We&apos;re not just teaching technology—we&apos;re shaping the future of Africa&apos;s digital workforce.
+            </p>
           </div>
-        </div>
-      </section>
 
-      {/* Team */}
-      <section className="section-padding bg-dark-800">
-        <div className="container-custom mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="heading-lg text-white mb-4">Our Leadership Team</h2>
-            <p className="text-gray-400 max-w-2xl mx-auto">Meet the experts driving CubeADM&apos;s mission forward.</p>
-          </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {team.map((member) => (
-              <div key={member.name} className="text-center group">
-                <div className="relative w-40 h-40 mx-auto mb-4 rounded-full overflow-hidden border-2 border-white/10 group-hover:border-primary-500/50 transition-colors">
-                  <Image src={member.image} alt={member.name} fill className="object-cover" />
-                </div>
-                <h3 className="text-lg font-semibold text-white">{member.name}</h3>
-                <p className="text-primary-500 text-sm">{member.role}</p>
+          {/* Story Content */}
+          <div className="grid lg:grid-cols-2 gap-16 items-center mb-20">
+            {/* Left - Image with Stats Overlay */}
+            <div className="relative">
+              <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-[#005CFF]/10">
+                <Image
+                  src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&q=80"
+                  alt="CubeADM Team Collaboration"
+                  width={600}
+                  height={400}
+                  className="w-full h-auto object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-transparent" />
               </div>
-            ))}
+              
+              {/* Floating Stats Cards */}
+              <div className="absolute -bottom-8 -right-8 bg-gradient-to-br from-[#005CFF] to-[#0046cc] p-6 rounded-2xl shadow-xl">
+                <div className="text-4xl font-bold text-white mb-1">500+</div>
+                <div className="text-white/80 text-sm">Professionals Trained</div>
+              </div>
+              <div className="absolute -top-6 -left-6 bg-white/10 backdrop-blur-lg border border-white/20 p-4 rounded-xl">
+                <div className="text-2xl font-bold text-white mb-1">95%</div>
+                <div className="text-gray-300 text-xs">Pass Rate</div>
+              </div>
+            </div>
+
+            {/* Right - Content */}
+            <div>
+              <h3 className="text-2xl font-bold text-white mb-6">Why We Started</h3>
+              <p className="text-gray-400 mb-6 leading-relaxed text-lg">
+                Zimbabwe has incredible talent, but limited access to world-class IT training. We saw graduates 
+                struggling to find jobs because they lacked practical skills. We saw businesses unable to find 
+                qualified IT professionals. We knew there had to be a better way.
+              </p>
+              <p className="text-gray-400 mb-8 leading-relaxed text-lg">
+                CubeADM was born to bridge this gap—combining international certification standards from Cisco, 
+                AWS, Microsoft, and CompTIA with hands-on, practical training that employers actually need.
+              </p>
+              
+              {/* Key Differentiators */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="flex items-start gap-3 p-4 bg-white/5 rounded-xl border border-white/10">
+                  <div className="w-10 h-10 bg-[#005CFF]/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <Shield className="w-5 h-5 text-[#005CFF]" />
+                  </div>
+                  <div>
+                    <h4 className="text-white font-semibold mb-1">Industry Certified</h4>
+                    <p className="text-gray-400 text-sm">Cisco, AWS, Microsoft partners</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3 p-4 bg-white/5 rounded-xl border border-white/10">
+                  <div className="w-10 h-10 bg-[#00D4FF]/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <Zap className="w-5 h-5 text-[#00D4FF]" />
+                  </div>
+                  <div>
+                    <h4 className="text-white font-semibold mb-1">Hands-On Labs</h4>
+                    <p className="text-gray-400 text-sm">Real equipment, real skills</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3 p-4 bg-white/5 rounded-xl border border-white/10">
+                  <div className="w-10 h-10 bg-[#005CFF]/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <TrendingUp className="w-5 h-5 text-[#005CFF]" />
+                  </div>
+                  <div>
+                    <h4 className="text-white font-semibold mb-1">Career Support</h4>
+                    <p className="text-gray-400 text-sm">Job placement assistance</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3 p-4 bg-white/5 rounded-xl border border-white/10">
+                  <div className="w-10 h-10 bg-[#00D4FF]/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <Globe className="w-5 h-5 text-[#00D4FF]" />
+                  </div>
+                  <div>
+                    <h4 className="text-white font-semibold mb-1">Regional Reach</h4>
+                    <p className="text-gray-400 text-sm">Serving Southern Africa</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Timeline */}
+          <div className="mt-20">
+            <h3 className="text-2xl font-bold text-white text-center mb-12">Our Journey So Far</h3>
+            <div className="grid md:grid-cols-3 lg:grid-cols-6 gap-6">
+              {milestones.map((milestone, index) => (
+                <div 
+                  key={milestone.year}
+                  className="relative group"
+                >
+                  {/* Connector Line */}
+                  {index < milestones.length - 1 && (
+                    <div className="hidden lg:block absolute top-8 left-full w-full h-0.5 bg-gradient-to-r from-[#005CFF]/50 to-transparent" />
+                  )}
+                  
+                  <div className="bg-white/5 border border-white/10 rounded-xl p-5 hover:border-[#005CFF]/30 hover:bg-white/10 transition-all h-full">
+                    <div className="text-[#00D4FF] font-bold text-2xl mb-2">{milestone.year}</div>
+                    <h4 className="text-white font-semibold mb-2">{milestone.title}</h4>
+                    <p className="text-gray-400 text-sm">{milestone.description}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>

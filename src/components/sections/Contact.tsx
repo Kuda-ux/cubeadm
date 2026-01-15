@@ -73,8 +73,8 @@ export default function Contact() {
     {
       icon: Phone,
       title: 'Call Us',
-      value: '+263 77 123 4567',
-      href: 'tel:+263771234567',
+      value: '+263 78 266 7295',
+      href: 'tel:+263782667295',
       color: 'from-[#00D4FF] to-[#005CFF]',
     },
     {
@@ -278,7 +278,7 @@ export default function Contact() {
                           onChange={handleChange}
                           onFocus={() => setFocusedField('phone')}
                           onBlur={() => setFocusedField(null)}
-                          placeholder="+263 77 123 4567"
+                          placeholder="+263 78 266 7295"
                           className="w-full pl-12 pr-4 py-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-[#005CFF] focus:ring-2 focus:ring-[#005CFF]/20 transition-all"
                         />
                       </div>

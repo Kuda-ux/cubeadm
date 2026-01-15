@@ -54,7 +54,7 @@ export default function TermsPage() {
             <p className="text-gray-600 mb-4">
               For questions about these Terms, contact us at:<br />
               Email: info@cubeadm.co.zw<br />
-              Phone: +263 77 123 4567
+              Phone: +263 78 266 7295
             </p>
           </div>
         </div>
