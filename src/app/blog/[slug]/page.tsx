@@ -204,21 +204,22 @@ export default function BlogPostPage({ params }: Props) {
                   "
                   dangerouslySetInnerHTML={{ 
                     __html: post.content
-                      .replace(/^## (.*$)/gim, '<h2>$1</h2>')
-                      .replace(/^### (.*$)/gim, '<h3>$1</h3>')
-                      .replace(/^#### (.*$)/gim, '<h4>$1</h4>')
+                      .split('\n')
+                      .map(line => {
+                        if (line.startsWith('## ')) return `<h2>${line.slice(3)}</h2>`
+                        if (line.startsWith('### ')) return `<h3>${line.slice(4)}</h3>`
+                        if (line.startsWith('#### ')) return `<h4>${line.slice(5)}</h4>`
+                        if (line.startsWith('- ')) return `<li>${line.slice(2)}</li>`
+                        if (line.trim() === '') return ''
+                        return `<p>${line}</p>`
+                      })
+                      .join('\n')
                       .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                      .replace(/\*(.*?)\*/g, '<em>$1</em>')
-                      .replace(/^- (.*$)/gim, '<li>$1</li>')
-                      .replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>')
-                      .replace(/\n\n/g, '</p><p>')
-                      .replace(/^(?!<[hulo])/gm, '<p>')
-                      .replace(/(?<![>])$/gm, '</p>')
                       .replace(/<p><\/p>/g, '')
-                      .replace(/<p><h/g, '<h')
-                      .replace(/<\/h([234])><\/p>/g, '</h$1>')
-                      .replace(/<p><ul>/g, '<ul>')
-                      .replace(/<\/ul><\/p>/g, '</ul>')
+                      .replace(/<\/li>\n<li>/g, '</li><li>')
+                      .replace(/<li>/g, '<ul><li>')
+                      .replace(/<\/li>(?!<li>)/g, '</li></ul>')
+                      .replace(/<\/ul>\n<ul>/g, '')
                   }}
                 />
 

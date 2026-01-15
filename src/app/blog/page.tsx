@@ -5,7 +5,7 @@ import { Calendar, User, ArrowRight, Clock, TrendingUp, Sparkles, Search } from 
 import { blogPosts, getFeaturedPosts } from '@/lib/blog-data'
 
 export const metadata: Metadata = {
-  title: 'IT Blog Zimbabwe | Cybersecurity, Cloud, AI Insights | CubeADM',
+  title: 'IT Blog Zimbabwe | Cybersecurity, Cloud, AI & Career Insights | CubeADM',
   description: 'Stay ahead with CubeADM\'s IT blog. Expert insights on cybersecurity threats in Zimbabwe, cloud computing guides, CCNA certification tips, AI trends for African businesses, and IT career advice. Updated weekly.',
   keywords: ['IT Blog Zimbabwe', 'Cybersecurity News Zimbabwe', 'Cloud Computing Blog Africa', 'Tech News Harare', 'IT Career Advice Zimbabwe', 'CCNA Guide Zimbabwe', 'AI Business Africa', 'Technology Trends Zimbabwe'],
   openGraph: {
