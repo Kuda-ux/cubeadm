@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import { Calendar, Clock, ArrowLeft, Share2, Linkedin, Twitter, Facebook, Tag, ChevronRight } from 'lucide-react'
 import { blogPosts, getBlogPost, getRelatedPosts } from '@/lib/blog-data'
+import MarkdownContent from '@/components/blog/MarkdownContent'
 
 type Props = {
   params: { slug: string }
@@ -189,39 +190,9 @@ export default function BlogPostPage({ params }: Props) {
             <div className="max-w-4xl mx-auto">
               <div className="grid lg:grid-cols-[1fr_280px] gap-12">
                 {/* Main Content */}
-                <div 
-                  className="prose prose-lg prose-invert max-w-none
-                    prose-headings:text-white prose-headings:font-bold
-                    prose-h2:text-2xl prose-h2:mt-12 prose-h2:mb-6 prose-h2:border-l-4 prose-h2:border-[#005CFF] prose-h2:pl-4
-                    prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-4 prose-h3:text-[#00D4FF]
-                    prose-p:text-gray-300 prose-p:leading-relaxed prose-p:mb-6
-                    prose-strong:text-white prose-strong:font-semibold
-                    prose-ul:text-gray-300 prose-ul:my-6
-                    prose-li:my-2
-                    prose-a:text-[#005CFF] prose-a:no-underline hover:prose-a:text-[#00D4FF]
-                    prose-blockquote:border-l-4 prose-blockquote:border-[#005CFF] prose-blockquote:bg-white/5 prose-blockquote:py-4 prose-blockquote:px-6 prose-blockquote:rounded-r-lg prose-blockquote:not-italic
-                    prose-code:bg-[#005CFF]/10 prose-code:text-[#00D4FF] prose-code:px-2 prose-code:py-1 prose-code:rounded prose-code:before:content-none prose-code:after:content-none
-                  "
-                  dangerouslySetInnerHTML={{ 
-                    __html: post.content
-                      .split('\n')
-                      .map(line => {
-                        if (line.startsWith('## ')) return `<h2>${line.slice(3)}</h2>`
-                        if (line.startsWith('### ')) return `<h3>${line.slice(4)}</h3>`
-                        if (line.startsWith('#### ')) return `<h4>${line.slice(5)}</h4>`
-                        if (line.startsWith('- ')) return `<li>${line.slice(2)}</li>`
-                        if (line.trim() === '') return ''
-                        return `<p>${line}</p>`
-                      })
-                      .join('\n')
-                      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                      .replace(/<p><\/p>/g, '')
-                      .replace(/<\/li>\n<li>/g, '</li><li>')
-                      .replace(/<li>/g, '<ul><li>')
-                      .replace(/<\/li>(?!<li>)/g, '</li></ul>')
-                      .replace(/<\/ul>\n<ul>/g, '')
-                  }}
-                />
+                <div className="max-w-none">
+                  <MarkdownContent content={post.content} />
+                </div>
 
                 {/* Sidebar */}
                 <aside className="lg:sticky lg:top-24 lg:self-start space-y-8">
