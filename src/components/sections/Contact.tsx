@@ -48,6 +48,21 @@ export default function Contact() {
 
       if (error) throw error
 
+      // Send confirmation email to the user
+      try {
+        await fetch('/api/send-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: formData.name,
+            email: formData.email,
+            service: formData.service,
+          }),
+        })
+      } catch (emailError) {
+        console.error('Failed to send confirmation email:', emailError)
+      }
+
       setSubmitStatus('success')
       setFormData({ name: '', email: '', phone: '', company: '', service: '', message: '' })
     } catch (error) {
