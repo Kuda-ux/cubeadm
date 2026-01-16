@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
     const serviceName = getServiceName(service)
 
     const { data, error } = await resend.emails.send({
-      from: 'CubeADM <noreply@cubeadm.co.zw>',
+      from: 'CubeADM <onboarding@resend.dev>',
       to: [email],
       subject: '✅ We Received Your Message - CubeADM',
       html: getConfirmationEmailHtml(name, serviceName),
