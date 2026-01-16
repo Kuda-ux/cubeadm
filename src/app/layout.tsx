@@ -4,6 +4,7 @@ import './globals.css'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import { Providers } from '@/components/Providers'
+import WhatsAppButton from '@/components/ui/WhatsAppButton'
 import { OrganizationSchema, LocalBusinessSchema, WebsiteSchema } from '@/components/seo/StructuredData'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
@@ -150,6 +151,7 @@ export default function RootLayout({
           <Header />
           <main>{children}</main>
           <Footer />
+          <WhatsAppButton />
         </Providers>
       </body>
     </html>
