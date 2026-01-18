@@ -48,7 +48,7 @@ export default function Contact() {
 
       if (error) throw error
 
-      // Send confirmation email to the user
+      // Send confirmation email to the user AND notification to CubeADM
       try {
         await fetch('/api/send-email', {
           method: 'POST',
@@ -56,11 +56,14 @@ export default function Contact() {
           body: JSON.stringify({
             name: formData.name,
             email: formData.email,
+            phone: formData.phone,
+            company: formData.company,
             service: formData.service,
+            message: formData.message,
           }),
         })
       } catch (emailError) {
-        console.error('Failed to send confirmation email:', emailError)
+        console.error('Failed to send emails:', emailError)
       }
 
       setSubmitStatus('success')

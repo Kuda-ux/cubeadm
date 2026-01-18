@@ -201,3 +201,163 @@ Harare, Zimbabwe
 © ${new Date().getFullYear()} CubeADM. All rights reserved.
   `
 }
+
+export interface ContactFormData {
+  name: string
+  email: string
+  phone?: string
+  company?: string
+  service: string
+  message: string
+}
+
+export function getNotificationEmailHtml(data: ContactFormData, serviceName: string): string {
+  const timestamp = new Date().toLocaleString('en-ZW', { 
+    timeZone: 'Africa/Harare',
+    dateStyle: 'full',
+    timeStyle: 'short'
+  })
+  
+  return `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>New Contact Form Submission</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7fa;">
+  <table role="presentation" style="width: 100%; border-collapse: collapse;">
+    <tr>
+      <td align="center" style="padding: 40px 20px;">
+        <table role="presentation" style="width: 100%; max-width: 600px; border-collapse: collapse; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);">
+          
+          <!-- Header -->
+          <tr>
+            <td style="background: linear-gradient(135deg, #005CFF 0%, #00D4FF 100%); padding: 30px; text-align: center;">
+              <h1 style="margin: 0; color: #ffffff; font-size: 24px; font-weight: 700;">🔔 New Contact Form Submission</h1>
+              <p style="margin: 10px 0 0; color: rgba(255, 255, 255, 0.9); font-size: 14px;">${timestamp}</p>
+            </td>
+          </tr>
+
+          <!-- Body -->
+          <tr>
+            <td style="padding: 30px;">
+              <!-- Contact Details -->
+              <table role="presentation" style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                <tr>
+                  <td style="padding: 15px; background-color: #f8fafc; border-radius: 8px; border-left: 4px solid #005CFF;">
+                    <h2 style="margin: 0 0 15px; color: #1a1a2e; font-size: 18px; font-weight: 600;">📋 Contact Details</h2>
+                    
+                    <table role="presentation" style="width: 100%; border-collapse: collapse;">
+                      <tr>
+                        <td style="padding: 8px 0; color: #64748b; font-size: 14px; width: 120px;">Name:</td>
+                        <td style="padding: 8px 0; color: #1a1a2e; font-size: 14px; font-weight: 600;">${data.name}</td>
+                      </tr>
+                      <tr>
+                        <td style="padding: 8px 0; color: #64748b; font-size: 14px;">Email:</td>
+                        <td style="padding: 8px 0;">
+                          <a href="mailto:${data.email}" style="color: #005CFF; text-decoration: none; font-size: 14px; font-weight: 600;">${data.email}</a>
+                        </td>
+                      </tr>
+                      ${data.phone ? `
+                      <tr>
+                        <td style="padding: 8px 0; color: #64748b; font-size: 14px;">Phone:</td>
+                        <td style="padding: 8px 0;">
+                          <a href="tel:${data.phone}" style="color: #005CFF; text-decoration: none; font-size: 14px; font-weight: 600;">${data.phone}</a>
+                        </td>
+                      </tr>
+                      ` : ''}
+                      ${data.company ? `
+                      <tr>
+                        <td style="padding: 8px 0; color: #64748b; font-size: 14px;">Company:</td>
+                        <td style="padding: 8px 0; color: #1a1a2e; font-size: 14px; font-weight: 600;">${data.company}</td>
+                      </tr>
+                      ` : ''}
+                      <tr>
+                        <td style="padding: 8px 0; color: #64748b; font-size: 14px;">Service:</td>
+                        <td style="padding: 8px 0;">
+                          <span style="display: inline-block; padding: 4px 12px; background: linear-gradient(135deg, #005CFF 0%, #00D4FF 100%); color: #ffffff; font-size: 12px; font-weight: 600; border-radius: 20px;">${serviceName}</span>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Message -->
+              <table role="presentation" style="width: 100%; border-collapse: collapse;">
+                <tr>
+                  <td style="padding: 15px; background-color: #fefce8; border-radius: 8px; border-left: 4px solid #eab308;">
+                    <h2 style="margin: 0 0 10px; color: #1a1a2e; font-size: 18px; font-weight: 600;">💬 Message</h2>
+                    <p style="margin: 0; color: #4a5568; font-size: 14px; line-height: 1.6; white-space: pre-wrap;">${data.message}</p>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Quick Actions -->
+              <table role="presentation" style="width: 100%; border-collapse: collapse; margin-top: 25px;">
+                <tr>
+                  <td align="center">
+                    <a href="mailto:${data.email}?subject=Re: Your CubeADM Inquiry - ${serviceName}" style="display: inline-block; padding: 14px 28px; background: linear-gradient(135deg, #005CFF 0%, #00D4FF 100%); color: #ffffff; text-decoration: none; font-size: 14px; font-weight: 600; border-radius: 8px; margin-right: 10px;">
+                      ✉️ Reply to ${data.name}
+                    </a>
+                    ${data.phone ? `
+                    <a href="tel:${data.phone}" style="display: inline-block; padding: 14px 28px; background: linear-gradient(135deg, #25D366 0%, #128C7E 100%); color: #ffffff; text-decoration: none; font-size: 14px; font-weight: 600; border-radius: 8px;">
+                      📞 Call Now
+                    </a>
+                    ` : ''}
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="background-color: #01124b; padding: 20px; text-align: center;">
+              <p style="margin: 0; color: rgba(255, 255, 255, 0.7); font-size: 12px;">
+                This is an automated notification from CubeADM Contact Form
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+  `
+}
+
+export function getNotificationEmailText(data: ContactFormData, serviceName: string): string {
+  const timestamp = new Date().toLocaleString('en-ZW', { 
+    timeZone: 'Africa/Harare',
+    dateStyle: 'full',
+    timeStyle: 'short'
+  })
+  
+  return `
+🔔 NEW CONTACT FORM SUBMISSION
+${timestamp}
+
+📋 CONTACT DETAILS
+------------------
+Name: ${data.name}
+Email: ${data.email}
+${data.phone ? `Phone: ${data.phone}` : ''}
+${data.company ? `Company: ${data.company}` : ''}
+Service: ${serviceName}
+
+💬 MESSAGE
+----------
+${data.message}
+
+---
+Reply to: ${data.email}
+${data.phone ? `Call: ${data.phone}` : ''}
+
+This is an automated notification from CubeADM Contact Form.
+  `
+}

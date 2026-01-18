@@ -1,6 +1,14 @@
 import { Resend } from 'resend'
 import { NextRequest, NextResponse } from 'next/server'
-import { getConfirmationEmailHtml, getConfirmationEmailText } from '@/lib/email-templates'
+import { 
+  getConfirmationEmailHtml, 
+  getConfirmationEmailText,
+  getNotificationEmailHtml,
+  getNotificationEmailText,
+  ContactFormData
+} from '@/lib/email-templates'
+
+const BUSINESS_EMAIL = 'info@cubeadm.co.zw'
 
 export async function POST(request: NextRequest) {
   try {
@@ -17,7 +25,7 @@ export async function POST(request: NextRequest) {
     const resend = new Resend(apiKey)
     
     const body = await request.json()
-    const { name, email, service } = body
+    const { name, email, phone, company, service, message } = body
 
     if (!name || !email) {
       return NextResponse.json(
@@ -27,8 +35,18 @@ export async function POST(request: NextRequest) {
     }
 
     const serviceName = getServiceName(service)
+    
+    const formData: ContactFormData = {
+      name,
+      email,
+      phone,
+      company,
+      service,
+      message: message || 'No message provided'
+    }
 
-    const { data, error } = await resend.emails.send({
+    // Send confirmation email to the client
+    const { error: clientError } = await resend.emails.send({
       from: 'CubeADM <onboarding@resend.dev>',
       to: [email],
       subject: '✅ We Received Your Message - CubeADM',
@@ -36,10 +54,24 @@ export async function POST(request: NextRequest) {
       text: getConfirmationEmailText(name, serviceName),
     })
 
-    if (error) {
-      console.error('Resend error:', error)
+    if (clientError) {
+      console.error('Error sending client confirmation email:', clientError)
+    }
+
+    // Send notification email to CubeADM business email
+    const { data, error: notificationError } = await resend.emails.send({
+      from: 'CubeADM Website <onboarding@resend.dev>',
+      to: [BUSINESS_EMAIL],
+      replyTo: email,
+      subject: `📩 New Inquiry: ${serviceName} - ${name}`,
+      html: getNotificationEmailHtml(formData, serviceName),
+      text: getNotificationEmailText(formData, serviceName),
+    })
+
+    if (notificationError) {
+      console.error('Error sending notification email:', notificationError)
       return NextResponse.json(
-        { error: 'Failed to send email' },
+        { error: 'Failed to send notification email' },
         { status: 500 }
       )
     }
