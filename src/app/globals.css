@@ -157,3 +157,37 @@ body {
   background: rgba(0, 92, 255, 0.3);
   color: #ffffff;
 }
+
+/* Dark mode select/dropdown styling */
+select {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: #ffffff;
+}
+
+select option {
+  background-color: #0d0d14;
+  color: #ffffff;
+  padding: 10px;
+}
+
+select option:hover,
+select option:focus,
+select option:checked {
+  background-color: #1a1a24;
+  color: #00D4FF;
+}
+
+/* Date input styling for dark mode */
+input[type="date"],
+input[type="month"],
+input[type="datetime-local"] {
+  color-scheme: dark;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="month"]::-webkit-calendar-picker-indicator,
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  cursor: pointer;
+}
+

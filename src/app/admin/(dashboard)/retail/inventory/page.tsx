@@ -1,23 +1,48 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { BarChart3, Search, AlertTriangle, Package, TrendingUp, TrendingDown } from 'lucide-react'
+import { BarChart3, Search, AlertTriangle, Package, TrendingUp, TrendingDown, Loader2 } from 'lucide-react'
 
-const inventory = [
-  { id: 1, name: 'Dell Latitude 5540', sku: 'DELL-LAT-5540', category: 'Laptops', inStock: 12, reorderLevel: 5, lastUpdated: '2026-01-29' },
-  { id: 2, name: 'HP ProBook 450 G10', sku: 'HP-PB450-G10', category: 'Laptops', inStock: 8, reorderLevel: 5, lastUpdated: '2026-01-28' },
-  { id: 3, name: 'Cisco Catalyst 9200', sku: 'CISCO-CAT-9200', category: 'Networking', inStock: 3, reorderLevel: 5, lastUpdated: '2026-01-27' },
-  { id: 4, name: 'HP ProLiant DL380 Gen10', sku: 'HP-DL380-G10', category: 'Servers', inStock: 0, reorderLevel: 2, lastUpdated: '2026-01-26' },
-  { id: 5, name: 'Ubiquiti UniFi AP AC Pro', sku: 'UBI-UAP-AC', category: 'Networking', inStock: 25, reorderLevel: 10, lastUpdated: '2026-01-29' },
-  { id: 6, name: 'Lenovo ThinkPad T14', sku: 'LEN-TP-T14', category: 'Laptops', inStock: 6, reorderLevel: 5, lastUpdated: '2026-01-28' },
-]
+interface InventoryItem {
+  id: string
+  name: string
+  sku: string
+  category?: string
+  stock_quantity: number
+  reorder_level?: number
+  updated_at: string
+}
 
 export default function InventoryPage() {
+  const [inventory, setInventory] = useState<InventoryItem[]>([])
+  const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
 
-  const lowStockCount = inventory.filter(i => i.inStock <= i.reorderLevel).length
-  const outOfStockCount = inventory.filter(i => i.inStock === 0).length
+  useEffect(() => {
+    fetchInventory()
+  }, [])
+
+  const fetchInventory = async () => {
+    try {
+      setLoading(true)
+      const response = await fetch('/api/admin/products')
+      const result = await response.json()
+      if (result.data) setInventory(result.data)
+    } catch (error) {
+      console.error('Error fetching inventory:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const filteredInventory = inventory.filter(item =>
+    item.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item.sku?.toLowerCase().includes(searchQuery.toLowerCase())
+  )
+
+  const lowStockCount = inventory.filter(i => i.stock_quantity <= (i.reorder_level || 5) && i.stock_quantity > 0).length
+  const outOfStockCount = inventory.filter(i => i.stock_quantity === 0).length
 
   return (
     <div className="space-y-6">
@@ -78,46 +103,60 @@ export default function InventoryPage() {
       </div>
 
       <div className="bg-white/5 border border-white/5 rounded-2xl overflow-hidden">
-        <table className="w-full">
-          <thead>
-            <tr className="text-left text-sm text-gray-500 border-b border-white/5 bg-white/5">
-              <th className="p-4 font-medium">Product</th>
-              <th className="p-4 font-medium">SKU</th>
-              <th className="p-4 font-medium">Category</th>
-              <th className="p-4 font-medium">In Stock</th>
-              <th className="p-4 font-medium">Reorder Level</th>
-              <th className="p-4 font-medium">Status</th>
-              <th className="p-4 font-medium">Last Updated</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-white/5">
-            {inventory.map((item) => (
-              <tr key={item.id} className="hover:bg-white/5">
-                <td className="p-4 font-medium">{item.name}</td>
-                <td className="p-4 text-gray-400 font-mono text-sm">{item.sku}</td>
-                <td className="p-4 text-gray-400">{item.category}</td>
-                <td className="p-4">
-                  <span className={`font-medium ${
-                    item.inStock === 0 ? 'text-red-500' : item.inStock <= item.reorderLevel ? 'text-yellow-500' : 'text-green-500'
-                  }`}>
-                    {item.inStock}
-                  </span>
-                </td>
-                <td className="p-4 text-gray-400">{item.reorderLevel}</td>
-                <td className="p-4">
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                    item.inStock === 0 ? 'bg-red-500/10 text-red-500' : 
-                    item.inStock <= item.reorderLevel ? 'bg-yellow-500/10 text-yellow-500' : 
-                    'bg-green-500/10 text-green-500'
-                  }`}>
-                    {item.inStock === 0 ? 'Out of Stock' : item.inStock <= item.reorderLevel ? 'Low Stock' : 'In Stock'}
-                  </span>
-                </td>
-                <td className="p-4 text-gray-400">{item.lastUpdated}</td>
+        {loading ? (
+          <div className="flex items-center justify-center py-12">
+            <Loader2 className="w-8 h-8 animate-spin text-[#005CFF]" />
+          </div>
+        ) : filteredInventory.length === 0 ? (
+          <div className="text-center py-12">
+            <Package className="w-12 h-12 mx-auto text-gray-500 mb-4" />
+            <p className="text-gray-500">No inventory items found</p>
+          </div>
+        ) : (
+          <table className="w-full">
+            <thead>
+              <tr className="text-left text-sm text-gray-500 border-b border-white/5 bg-white/5">
+                <th className="p-4 font-medium">Product</th>
+                <th className="p-4 font-medium">SKU</th>
+                <th className="p-4 font-medium">Category</th>
+                <th className="p-4 font-medium">In Stock</th>
+                <th className="p-4 font-medium">Reorder Level</th>
+                <th className="p-4 font-medium">Status</th>
+                <th className="p-4 font-medium">Last Updated</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-white/5">
+              {filteredInventory.map((item) => {
+                const reorderLevel = item.reorder_level || 5
+                return (
+                  <tr key={item.id} className="hover:bg-white/5">
+                    <td className="p-4 font-medium">{item.name}</td>
+                    <td className="p-4 text-gray-400 font-mono text-sm">{item.sku}</td>
+                    <td className="p-4 text-gray-400">{item.category || 'N/A'}</td>
+                    <td className="p-4">
+                      <span className={`font-medium ${
+                        item.stock_quantity === 0 ? 'text-red-500' : item.stock_quantity <= reorderLevel ? 'text-yellow-500' : 'text-green-500'
+                      }`}>
+                        {item.stock_quantity}
+                      </span>
+                    </td>
+                    <td className="p-4 text-gray-400">{reorderLevel}</td>
+                    <td className="p-4">
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                        item.stock_quantity === 0 ? 'bg-red-500/10 text-red-500' : 
+                        item.stock_quantity <= reorderLevel ? 'bg-yellow-500/10 text-yellow-500' : 
+                        'bg-green-500/10 text-green-500'
+                      }`}>
+                        {item.stock_quantity === 0 ? 'Out of Stock' : item.stock_quantity <= reorderLevel ? 'Low Stock' : 'In Stock'}
+                      </span>
+                    </td>
+                    <td className="p-4 text-gray-400">{item.updated_at ? new Date(item.updated_at).toLocaleDateString() : 'N/A'}</td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        )}
       </div>
     </div>
   )

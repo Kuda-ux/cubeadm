@@ -1,20 +1,60 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Users, Plus, Search, Mail, Phone, Edit, Trash2 } from 'lucide-react'
+import { Users, Plus, Search, Mail, Phone, Edit, Trash2, Loader2 } from 'lucide-react'
 
-const staff = [
-  { id: 1, name: 'John Mutasa', email: 'john@cubeadm.co.zw', phone: '+263 77 123 4567', position: 'CEO & Founder', department: 'Management', status: 'active' },
-  { id: 2, name: 'Sarah Chikwanha', email: 'sarah@cubeadm.co.zw', phone: '+263 78 234 5678', position: 'Head of Training', department: 'Training', status: 'active' },
-  { id: 3, name: 'Michael Ndlovu', email: 'michael@cubeadm.co.zw', phone: '+263 71 345 6789', position: 'CTO', department: 'IT', status: 'active' },
-  { id: 4, name: 'Grace Moyo', email: 'grace@cubeadm.co.zw', phone: '+263 77 456 7890', position: 'Operations Director', department: 'Operations', status: 'leave' },
-  { id: 5, name: 'David Zimuto', email: 'david@cubeadm.co.zw', phone: '+263 78 567 8901', position: 'Senior Developer', department: 'IT', status: 'active' },
-  { id: 6, name: 'Tendai Maposa', email: 'tendai@cubeadm.co.zw', phone: '+263 71 678 9012', position: 'Sales Manager', department: 'Sales', status: 'active' },
-]
+interface Employee {
+  id: string
+  employee_number: string
+  first_name: string
+  last_name: string
+  email: string
+  phone?: string
+  position?: string
+  department?: string
+  status: string
+  created_at: string
+}
 
 export default function StaffPage() {
+  const [staff, setStaff] = useState<Employee[]>([])
+  const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
+
+  useEffect(() => {
+    fetchStaff()
+  }, [])
+
+  const fetchStaff = async () => {
+    try {
+      setLoading(true)
+      const response = await fetch('/api/admin/employees')
+      const result = await response.json()
+      if (result.data) setStaff(result.data)
+    } catch (error) {
+      console.error('Error fetching staff:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleDelete = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this employee?')) return
+    try {
+      const response = await fetch(`/api/admin/employees/${id}`, { method: 'DELETE' })
+      if (response.ok) setStaff(staff.filter(s => s.id !== id))
+    } catch (error) {
+      console.error('Error deleting employee:', error)
+    }
+  }
+
+  const filteredStaff = staff.filter(employee => {
+    const name = `${employee.first_name} ${employee.last_name}`.toLowerCase()
+    return name.includes(searchQuery.toLowerCase()) ||
+      employee.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      employee.department?.toLowerCase().includes(searchQuery.toLowerCase())
+  })
 
   return (
     <div className="space-y-6">
@@ -46,51 +86,67 @@ export default function StaffPage() {
       </div>
 
       <div className="bg-white/5 border border-white/5 rounded-2xl overflow-hidden">
-        <table className="w-full">
-          <thead>
-            <tr className="text-left text-sm text-gray-500 border-b border-white/5 bg-white/5">
-              <th className="p-4 font-medium">Employee</th>
-              <th className="p-4 font-medium">Position</th>
-              <th className="p-4 font-medium">Department</th>
-              <th className="p-4 font-medium">Contact</th>
-              <th className="p-4 font-medium">Status</th>
-              <th className="p-4 font-medium">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-white/5">
-            {staff.map((employee) => (
-              <tr key={employee.id} className="hover:bg-white/5">
-                <td className="p-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-gradient-to-br from-rose-500 to-red-500 rounded-full flex items-center justify-center text-white font-medium">
-                      {employee.name.split(' ').map(n => n[0]).join('')}
-                    </div>
-                    <div>
-                      <p className="font-medium">{employee.name}</p>
-                      <p className="text-sm text-gray-500">{employee.email}</p>
-                    </div>
-                  </div>
-                </td>
-                <td className="p-4 text-gray-400">{employee.position}</td>
-                <td className="p-4 text-gray-400">{employee.department}</td>
-                <td className="p-4 text-gray-400">{employee.phone}</td>
-                <td className="p-4">
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                    employee.status === 'active' ? 'bg-green-500/10 text-green-500' : 'bg-yellow-500/10 text-yellow-500'
-                  }`}>
-                    {employee.status}
-                  </span>
-                </td>
-                <td className="p-4">
-                  <div className="flex items-center gap-2">
-                    <Link href={`/admin/hr/staff/${employee.id}`} className="text-sm text-[#00D4FF] hover:underline">View</Link>
-                    <Link href={`/admin/hr/staff/${employee.id}/edit`} className="p-2 hover:bg-white/10 rounded-lg"><Edit className="w-4 h-4 text-gray-400" /></Link>
-                  </div>
-                </td>
+        {loading ? (
+          <div className="flex items-center justify-center py-12">
+            <Loader2 className="w-8 h-8 animate-spin text-[#005CFF]" />
+          </div>
+        ) : filteredStaff.length === 0 ? (
+          <div className="text-center py-12">
+            <Users className="w-12 h-12 mx-auto text-gray-500 mb-4" />
+            <p className="text-gray-500">No employees found</p>
+            <Link href="/admin/hr/staff/new" className="text-[#00D4FF] hover:underline mt-2 inline-block">
+              Add your first employee
+            </Link>
+          </div>
+        ) : (
+          <table className="w-full">
+            <thead>
+              <tr className="text-left text-sm text-gray-500 border-b border-white/5 bg-white/5">
+                <th className="p-4 font-medium">Employee</th>
+                <th className="p-4 font-medium">Position</th>
+                <th className="p-4 font-medium">Department</th>
+                <th className="p-4 font-medium">Contact</th>
+                <th className="p-4 font-medium">Status</th>
+                <th className="p-4 font-medium">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-white/5">
+              {filteredStaff.map((employee) => (
+                <tr key={employee.id} className="hover:bg-white/5">
+                  <td className="p-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-gradient-to-br from-rose-500 to-red-500 rounded-full flex items-center justify-center text-white font-medium">
+                        {employee.first_name?.[0]}{employee.last_name?.[0]}
+                      </div>
+                      <div>
+                        <p className="font-medium">{employee.first_name} {employee.last_name}</p>
+                        <p className="text-sm text-gray-500">{employee.email}</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="p-4 text-gray-400">{employee.position || 'N/A'}</td>
+                  <td className="p-4 text-gray-400">{employee.department || 'N/A'}</td>
+                  <td className="p-4 text-gray-400">{employee.phone || 'N/A'}</td>
+                  <td className="p-4">
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                      employee.status === 'active' ? 'bg-green-500/10 text-green-500' : 
+                      employee.status === 'on_leave' ? 'bg-yellow-500/10 text-yellow-500' :
+                      'bg-gray-500/10 text-gray-500'
+                    }`}>
+                      {employee.status}
+                    </span>
+                  </td>
+                  <td className="p-4">
+                    <div className="flex items-center gap-2">
+                      <Link href={`/admin/hr/staff/${employee.id}`} className="text-sm text-[#00D4FF] hover:underline">View</Link>
+                      <button onClick={() => handleDelete(employee.id)} className="text-sm text-red-500 hover:underline">Delete</button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
     </div>
   )

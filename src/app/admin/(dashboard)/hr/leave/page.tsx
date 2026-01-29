@@ -1,26 +1,68 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Calendar, Plus, Search, CheckCircle2, XCircle, Clock } from 'lucide-react'
+import { Calendar, Plus, Search, CheckCircle2, XCircle, Clock, Loader2 } from 'lucide-react'
 
-const leaveRequests = [
-  { id: 1, employee: 'Grace Moyo', type: 'Annual Leave', startDate: '2026-01-27', endDate: '2026-01-31', days: 5, reason: 'Family vacation', status: 'approved' },
-  { id: 2, employee: 'Rumbidzai Choto', type: 'Annual Leave', startDate: '2026-02-03', endDate: '2026-02-07', days: 5, reason: 'Personal matters', status: 'pending' },
-  { id: 3, employee: 'Tatenda Moyo', type: 'Sick Leave', startDate: '2026-01-30', endDate: '2026-01-31', days: 2, reason: 'Medical appointment', status: 'pending' },
-  { id: 4, employee: 'David Zimuto', type: 'Annual Leave', startDate: '2026-02-10', endDate: '2026-02-14', days: 5, reason: 'Travel', status: 'approved' },
-  { id: 5, employee: 'Sarah Chikwanha', type: 'Sick Leave', startDate: '2026-01-15', endDate: '2026-01-16', days: 2, reason: 'Flu', status: 'approved' },
-]
+interface LeaveRequest {
+  id: string
+  employee_id?: string
+  employees?: { first_name: string; last_name: string }
+  leave_type: string
+  start_date: string
+  end_date: string
+  days: number
+  reason?: string
+  status: string
+  created_at: string
+}
 
 export default function LeavePage() {
+  const [leaveRequests, setLeaveRequests] = useState<LeaveRequest[]>([])
+  const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
   const [filter, setFilter] = useState('all')
 
+  useEffect(() => {
+    fetchLeaveRequests()
+  }, [])
+
+  const fetchLeaveRequests = async () => {
+    try {
+      setLoading(true)
+      const response = await fetch('/api/admin/leave')
+      const result = await response.json()
+      if (result.data) setLeaveRequests(result.data)
+    } catch (error) {
+      console.error('Error fetching leave requests:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleStatusUpdate = async (id: string, status: string) => {
+    try {
+      const response = await fetch(`/api/admin/leave/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status })
+      })
+      if (response.ok) fetchLeaveRequests()
+    } catch (error) {
+      console.error('Error updating leave status:', error)
+    }
+  }
+
   const filteredRequests = leaveRequests.filter(req => {
-    const matchesSearch = req.employee.toLowerCase().includes(searchQuery.toLowerCase())
+    const employeeName = `${req.employees?.first_name || ''} ${req.employees?.last_name || ''}`.toLowerCase()
+    const matchesSearch = employeeName.includes(searchQuery.toLowerCase())
     const matchesFilter = filter === 'all' || req.status === filter
     return matchesSearch && matchesFilter
   })
+
+  const pendingCount = leaveRequests.filter(r => r.status === 'pending').length
+  const approvedCount = leaveRequests.filter(r => r.status === 'approved').length
+  const rejectedCount = leaveRequests.filter(r => r.status === 'rejected').length
 
   return (
     <div className="space-y-6">
@@ -46,7 +88,7 @@ export default function LeavePage() {
             </div>
             <div>
               <p className="text-gray-500 text-sm">Pending</p>
-              <p className="text-2xl font-bold">{leaveRequests.filter(r => r.status === 'pending').length}</p>
+              <p className="text-2xl font-bold">{pendingCount}</p>
             </div>
           </div>
         </div>
@@ -57,7 +99,7 @@ export default function LeavePage() {
             </div>
             <div>
               <p className="text-gray-500 text-sm">Approved</p>
-              <p className="text-2xl font-bold">{leaveRequests.filter(r => r.status === 'approved').length}</p>
+              <p className="text-2xl font-bold">{approvedCount}</p>
             </div>
           </div>
         </div>
@@ -68,7 +110,7 @@ export default function LeavePage() {
             </div>
             <div>
               <p className="text-gray-500 text-sm">Rejected</p>
-              <p className="text-2xl font-bold">{leaveRequests.filter(r => r.status === 'rejected').length}</p>
+              <p className="text-2xl font-bold">{rejectedCount}</p>
             </div>
           </div>
         </div>
@@ -98,47 +140,58 @@ export default function LeavePage() {
       </div>
 
       <div className="bg-white/5 border border-white/5 rounded-2xl overflow-hidden">
-        <table className="w-full">
-          <thead>
-            <tr className="text-left text-sm text-gray-500 border-b border-white/5 bg-white/5">
-              <th className="p-4 font-medium">Employee</th>
-              <th className="p-4 font-medium">Type</th>
-              <th className="p-4 font-medium">Duration</th>
-              <th className="p-4 font-medium">Days</th>
-              <th className="p-4 font-medium">Reason</th>
-              <th className="p-4 font-medium">Status</th>
-              <th className="p-4 font-medium">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-white/5">
-            {filteredRequests.map((request) => (
-              <tr key={request.id} className="hover:bg-white/5">
-                <td className="p-4 font-medium">{request.employee}</td>
-                <td className="p-4 text-gray-400">{request.type}</td>
-                <td className="p-4 text-gray-400">{request.startDate} - {request.endDate}</td>
-                <td className="p-4 text-gray-400">{request.days}</td>
-                <td className="p-4 text-gray-400">{request.reason}</td>
-                <td className="p-4">
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                    request.status === 'approved' ? 'bg-green-500/10 text-green-500' :
-                    request.status === 'pending' ? 'bg-yellow-500/10 text-yellow-500' :
-                    'bg-red-500/10 text-red-500'
-                  }`}>
-                    {request.status}
-                  </span>
-                </td>
-                <td className="p-4">
-                  {request.status === 'pending' && (
-                    <div className="flex items-center gap-2">
-                      <button className="text-sm text-green-500 hover:underline">Approve</button>
-                      <button className="text-sm text-red-500 hover:underline">Reject</button>
-                    </div>
-                  )}
-                </td>
+        {loading ? (
+          <div className="flex items-center justify-center py-12">
+            <Loader2 className="w-8 h-8 animate-spin text-[#005CFF]" />
+          </div>
+        ) : filteredRequests.length === 0 ? (
+          <div className="text-center py-12">
+            <Calendar className="w-12 h-12 mx-auto text-gray-500 mb-4" />
+            <p className="text-gray-500">No leave requests found</p>
+          </div>
+        ) : (
+          <table className="w-full">
+            <thead>
+              <tr className="text-left text-sm text-gray-500 border-b border-white/5 bg-white/5">
+                <th className="p-4 font-medium">Employee</th>
+                <th className="p-4 font-medium">Type</th>
+                <th className="p-4 font-medium">Duration</th>
+                <th className="p-4 font-medium">Days</th>
+                <th className="p-4 font-medium">Reason</th>
+                <th className="p-4 font-medium">Status</th>
+                <th className="p-4 font-medium">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-white/5">
+              {filteredRequests.map((request) => (
+                <tr key={request.id} className="hover:bg-white/5">
+                  <td className="p-4 font-medium">{request.employees?.first_name} {request.employees?.last_name}</td>
+                  <td className="p-4 text-gray-400">{request.leave_type}</td>
+                  <td className="p-4 text-gray-400">{request.start_date} - {request.end_date}</td>
+                  <td className="p-4 text-gray-400">{request.days}</td>
+                  <td className="p-4 text-gray-400">{request.reason || 'N/A'}</td>
+                  <td className="p-4">
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                      request.status === 'approved' ? 'bg-green-500/10 text-green-500' :
+                      request.status === 'pending' ? 'bg-yellow-500/10 text-yellow-500' :
+                      'bg-red-500/10 text-red-500'
+                    }`}>
+                      {request.status}
+                    </span>
+                  </td>
+                  <td className="p-4">
+                    {request.status === 'pending' && (
+                      <div className="flex items-center gap-2">
+                        <button onClick={() => handleStatusUpdate(request.id, 'approved')} className="text-sm text-green-500 hover:underline">Approve</button>
+                        <button onClick={() => handleStatusUpdate(request.id, 'rejected')} className="text-sm text-red-500 hover:underline">Reject</button>
+                      </div>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
     </div>
   )

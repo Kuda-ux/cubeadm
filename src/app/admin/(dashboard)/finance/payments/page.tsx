@@ -1,19 +1,59 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { CreditCard, Plus, Search, ArrowUpRight, ArrowDownRight } from 'lucide-react'
+import { CreditCard, Plus, Search, ArrowUpRight, ArrowDownRight, Loader2 } from 'lucide-react'
 
-const payments = [
-  { id: 'PAY-001', invoice: 'INV-001', client: 'ZimBank Ltd', amount: '$15,000', method: 'Bank Transfer', date: '2026-01-29', type: 'received' },
-  { id: 'PAY-002', invoice: 'INV-005', client: 'Econet Wireless', amount: '$18,000', method: 'Bank Transfer', date: '2026-01-28', type: 'received' },
-  { id: 'PAY-003', invoice: 'INV-006', client: 'ZIMRA', amount: '$9,500', method: 'Paynow', date: '2026-01-27', type: 'received' },
-  { id: 'PAY-004', invoice: null, client: 'Dell Technologies', amount: '$12,000', method: 'Bank Transfer', date: '2026-01-26', type: 'sent' },
-  { id: 'PAY-005', invoice: null, client: 'AWS', amount: '$2,340', method: 'Credit Card', date: '2026-01-25', type: 'sent' },
-]
+interface Payment {
+  id: string
+  payment_number: string
+  invoice_id?: string
+  invoices?: { invoice_number: string }
+  client_id?: string
+  clients?: { company_name: string }
+  amount: number
+  payment_method?: string
+  payment_date: string
+  payment_type?: string
+  created_at: string
+}
 
 export default function PaymentsPage() {
+  const [payments, setPayments] = useState<Payment[]>([])
+  const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
+
+  useEffect(() => {
+    fetchPayments()
+  }, [])
+
+  const fetchPayments = async () => {
+    try {
+      setLoading(true)
+      const response = await fetch('/api/admin/payments')
+      const result = await response.json()
+      if (result.data) setPayments(result.data)
+    } catch (error) {
+      console.error('Error fetching payments:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleDelete = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this payment?')) return
+    try {
+      const response = await fetch(`/api/admin/payments/${id}`, { method: 'DELETE' })
+      if (response.ok) setPayments(payments.filter(p => p.id !== id))
+    } catch (error) {
+      console.error('Error deleting payment:', error)
+    }
+  }
+
+  const filteredPayments = payments.filter(payment =>
+    payment.payment_number?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    payment.clients?.company_name?.toLowerCase().includes(searchQuery.toLowerCase())
+  )
 
   return (
     <div className="space-y-6">
@@ -45,48 +85,60 @@ export default function PaymentsPage() {
       </div>
 
       <div className="bg-white/5 border border-white/5 rounded-2xl overflow-hidden">
-        <table className="w-full">
-          <thead>
-            <tr className="text-left text-sm text-gray-500 border-b border-white/5 bg-white/5">
-              <th className="p-4 font-medium">Payment ID</th>
-              <th className="p-4 font-medium">Client/Vendor</th>
-              <th className="p-4 font-medium">Invoice</th>
-              <th className="p-4 font-medium">Amount</th>
-              <th className="p-4 font-medium">Method</th>
-              <th className="p-4 font-medium">Date</th>
-              <th className="p-4 font-medium">Type</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-white/5">
-            {payments.map((payment) => (
-              <tr key={payment.id} className="hover:bg-white/5">
-                <td className="p-4">
-                  <span className="flex items-center gap-2">
-                    <CreditCard className="w-4 h-4 text-emerald-500" />
-                    <span className="font-medium text-[#00D4FF]">{payment.id}</span>
-                  </span>
-                </td>
-                <td className="p-4">{payment.client}</td>
-                <td className="p-4 text-gray-400">{payment.invoice || '-'}</td>
-                <td className="p-4">
-                  <span className={`font-medium ${payment.type === 'received' ? 'text-green-500' : 'text-red-500'}`}>
-                    {payment.type === 'received' ? '+' : '-'}{payment.amount}
-                  </span>
-                </td>
-                <td className="p-4 text-gray-400">{payment.method}</td>
-                <td className="p-4 text-gray-400">{payment.date}</td>
-                <td className="p-4">
-                  <span className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium w-fit ${
-                    payment.type === 'received' ? 'bg-green-500/10 text-green-500' : 'bg-red-500/10 text-red-500'
-                  }`}>
-                    {payment.type === 'received' ? <ArrowDownRight className="w-3 h-3" /> : <ArrowUpRight className="w-3 h-3" />}
-                    {payment.type}
-                  </span>
-                </td>
+        {loading ? (
+          <div className="flex items-center justify-center py-12">
+            <Loader2 className="w-8 h-8 animate-spin text-[#005CFF]" />
+          </div>
+        ) : filteredPayments.length === 0 ? (
+          <div className="text-center py-12">
+            <CreditCard className="w-12 h-12 mx-auto text-gray-500 mb-4" />
+            <p className="text-gray-500">No payments found</p>
+            <Link href="/admin/finance/payments/new" className="text-[#00D4FF] hover:underline mt-2 inline-block">
+              Record your first payment
+            </Link>
+          </div>
+        ) : (
+          <table className="w-full">
+            <thead>
+              <tr className="text-left text-sm text-gray-500 border-b border-white/5 bg-white/5">
+                <th className="p-4 font-medium">Payment ID</th>
+                <th className="p-4 font-medium">Client</th>
+                <th className="p-4 font-medium">Invoice</th>
+                <th className="p-4 font-medium">Amount</th>
+                <th className="p-4 font-medium">Method</th>
+                <th className="p-4 font-medium">Date</th>
+                <th className="p-4 font-medium">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-white/5">
+              {filteredPayments.map((payment) => (
+                <tr key={payment.id} className="hover:bg-white/5">
+                  <td className="p-4">
+                    <span className="flex items-center gap-2">
+                      <CreditCard className="w-4 h-4 text-emerald-500" />
+                      <span className="font-medium text-[#00D4FF]">{payment.payment_number}</span>
+                    </span>
+                  </td>
+                  <td className="p-4">{payment.clients?.company_name || 'N/A'}</td>
+                  <td className="p-4 text-gray-400">{payment.invoices?.invoice_number || '-'}</td>
+                  <td className="p-4">
+                    <span className="font-medium text-green-500">
+                      +${payment.amount?.toLocaleString() || '0'}
+                    </span>
+                  </td>
+                  <td className="p-4 text-gray-400">{payment.payment_method || 'N/A'}</td>
+                  <td className="p-4 text-gray-400">{payment.payment_date || new Date(payment.created_at).toLocaleDateString()}</td>
+                  <td className="p-4">
+                    <div className="flex items-center gap-2">
+                      <Link href={`/admin/finance/payments/${payment.id}`} className="text-sm text-[#00D4FF] hover:underline">View</Link>
+                      <button onClick={() => handleDelete(payment.id)} className="text-sm text-red-500 hover:underline">Delete</button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
     </div>
   )

@@ -49,14 +49,42 @@ export default function NewStudentPage() {
     e.preventDefault()
     setIsSubmitting(true)
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    
-    // TODO: Implement actual API call
-    console.log('Form data:', formData)
-    
-    setIsSubmitting(false)
-    router.push('/admin/training/students')
+    try {
+      const response = await fetch('/api/admin/students', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          first_name: formData.firstName,
+          last_name: formData.lastName,
+          email: formData.email,
+          phone: formData.phone,
+          date_of_birth: formData.dateOfBirth || null,
+          gender: formData.gender || null,
+          national_id: formData.nationalId || null,
+          address: formData.address || null,
+          city: formData.city || null,
+          country: formData.country,
+          education_level: formData.educationLevel || null,
+          occupation: formData.occupation || null,
+          employer: formData.employer || null,
+          emergency_contact_name: formData.emergencyContactName || null,
+          emergency_contact_phone: formData.emergencyContactPhone || null,
+          notes: formData.notes || null,
+          status: 'active'
+        })
+      })
+      
+      if (!response.ok) {
+        throw new Error('Failed to create student')
+      }
+      
+      router.push('/admin/training/students')
+    } catch (error) {
+      console.error('Error creating student:', error)
+      alert('Failed to create student. Please try again.')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (

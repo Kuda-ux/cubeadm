@@ -1,23 +1,59 @@
 'use client'
 
-import { useState } from 'react'
-import { DollarSign, Download, Calendar, Users } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { DollarSign, Download, Calendar, Users, Loader2 } from 'lucide-react'
 
-const payrollData = [
-  { id: 1, name: 'John Mutasa', position: 'CEO & Founder', baseSalary: '$5,000', allowances: '$500', deductions: '$250', netSalary: '$5,250', status: 'paid' },
-  { id: 2, name: 'Sarah Chikwanha', position: 'Head of Training', baseSalary: '$3,500', allowances: '$300', deductions: '$175', netSalary: '$3,625', status: 'paid' },
-  { id: 3, name: 'Michael Ndlovu', position: 'CTO', baseSalary: '$4,000', allowances: '$400', deductions: '$200', netSalary: '$4,200', status: 'paid' },
-  { id: 4, name: 'Grace Moyo', position: 'Operations Director', baseSalary: '$3,200', allowances: '$300', deductions: '$160', netSalary: '$3,340', status: 'pending' },
-  { id: 5, name: 'David Zimuto', position: 'Senior Developer', baseSalary: '$2,800', allowances: '$250', deductions: '$140', netSalary: '$2,910', status: 'pending' },
-  { id: 6, name: 'Tendai Maposa', position: 'Sales Manager', baseSalary: '$2,500', allowances: '$200', deductions: '$125', netSalary: '$2,575', status: 'pending' },
-]
+interface PayrollRecord {
+  id: string
+  employee_id?: string
+  employees?: { first_name: string; last_name: string; position?: string }
+  pay_period: string
+  base_salary: number
+  allowances: number
+  deductions: number
+  net_salary: number
+  status: string
+  created_at: string
+}
 
 export default function PayrollPage() {
+  const [payrollData, setPayrollData] = useState<PayrollRecord[]>([])
+  const [loading, setLoading] = useState(true)
   const [selectedMonth, setSelectedMonth] = useState('2026-01')
 
-  const totalPayroll = 21900
-  const paidAmount = 13075
-  const pendingAmount = 8825
+  useEffect(() => {
+    fetchPayroll()
+  }, [selectedMonth])
+
+  const fetchPayroll = async () => {
+    try {
+      setLoading(true)
+      const response = await fetch(`/api/admin/payroll?period=${selectedMonth}`)
+      const result = await response.json()
+      if (result.data) setPayrollData(result.data)
+    } catch (error) {
+      console.error('Error fetching payroll:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleProcessPayment = async (id: string) => {
+    try {
+      const response = await fetch(`/api/admin/payroll/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'paid', paid_at: new Date().toISOString() })
+      })
+      if (response.ok) fetchPayroll()
+    } catch (error) {
+      console.error('Error processing payment:', error)
+    }
+  }
+
+  const totalPayroll = payrollData.reduce((sum, r) => sum + (r.net_salary || 0), 0)
+  const paidAmount = payrollData.filter(r => r.status === 'paid').reduce((sum, r) => sum + (r.net_salary || 0), 0)
+  const pendingAmount = payrollData.filter(r => r.status === 'pending').reduce((sum, r) => sum + (r.net_salary || 0), 0)
 
   return (
     <div className="space-y-6">
@@ -77,44 +113,55 @@ export default function PayrollPage() {
       </div>
 
       <div className="bg-white/5 border border-white/5 rounded-2xl overflow-hidden">
-        <table className="w-full">
-          <thead>
-            <tr className="text-left text-sm text-gray-500 border-b border-white/5 bg-white/5">
-              <th className="p-4 font-medium">Employee</th>
-              <th className="p-4 font-medium">Position</th>
-              <th className="p-4 font-medium">Base Salary</th>
-              <th className="p-4 font-medium">Allowances</th>
-              <th className="p-4 font-medium">Deductions</th>
-              <th className="p-4 font-medium">Net Salary</th>
-              <th className="p-4 font-medium">Status</th>
-              <th className="p-4 font-medium">Action</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-white/5">
-            {payrollData.map((record) => (
-              <tr key={record.id} className="hover:bg-white/5">
-                <td className="p-4 font-medium">{record.name}</td>
-                <td className="p-4 text-gray-400">{record.position}</td>
-                <td className="p-4 text-gray-400">{record.baseSalary}</td>
-                <td className="p-4 text-green-500">+{record.allowances}</td>
-                <td className="p-4 text-red-500">-{record.deductions}</td>
-                <td className="p-4 font-medium text-[#00D4FF]">{record.netSalary}</td>
-                <td className="p-4">
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                    record.status === 'paid' ? 'bg-green-500/10 text-green-500' : 'bg-yellow-500/10 text-yellow-500'
-                  }`}>
-                    {record.status}
-                  </span>
-                </td>
-                <td className="p-4">
-                  {record.status === 'pending' && (
-                    <button className="text-sm text-[#00D4FF] hover:underline">Process</button>
-                  )}
-                </td>
+        {loading ? (
+          <div className="flex items-center justify-center py-12">
+            <Loader2 className="w-8 h-8 animate-spin text-[#005CFF]" />
+          </div>
+        ) : payrollData.length === 0 ? (
+          <div className="text-center py-12">
+            <DollarSign className="w-12 h-12 mx-auto text-gray-500 mb-4" />
+            <p className="text-gray-500">No payroll records found for this period</p>
+          </div>
+        ) : (
+          <table className="w-full">
+            <thead>
+              <tr className="text-left text-sm text-gray-500 border-b border-white/5 bg-white/5">
+                <th className="p-4 font-medium">Employee</th>
+                <th className="p-4 font-medium">Position</th>
+                <th className="p-4 font-medium">Base Salary</th>
+                <th className="p-4 font-medium">Allowances</th>
+                <th className="p-4 font-medium">Deductions</th>
+                <th className="p-4 font-medium">Net Salary</th>
+                <th className="p-4 font-medium">Status</th>
+                <th className="p-4 font-medium">Action</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-white/5">
+              {payrollData.map((record) => (
+                <tr key={record.id} className="hover:bg-white/5">
+                  <td className="p-4 font-medium">{record.employees?.first_name} {record.employees?.last_name}</td>
+                  <td className="p-4 text-gray-400">{record.employees?.position || 'N/A'}</td>
+                  <td className="p-4 text-gray-400">${record.base_salary?.toLocaleString() || '0'}</td>
+                  <td className="p-4 text-green-500">+${record.allowances?.toLocaleString() || '0'}</td>
+                  <td className="p-4 text-red-500">-${record.deductions?.toLocaleString() || '0'}</td>
+                  <td className="p-4 font-medium text-[#00D4FF]">${record.net_salary?.toLocaleString() || '0'}</td>
+                  <td className="p-4">
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                      record.status === 'paid' ? 'bg-green-500/10 text-green-500' : 'bg-yellow-500/10 text-yellow-500'
+                    }`}>
+                      {record.status}
+                    </span>
+                  </td>
+                  <td className="p-4">
+                    {record.status === 'pending' && (
+                      <button onClick={() => handleProcessPayment(record.id)} className="text-sm text-[#00D4FF] hover:underline">Process</button>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
     </div>
   )

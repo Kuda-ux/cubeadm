@@ -1,20 +1,57 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Wallet, Plus, Search, Receipt } from 'lucide-react'
+import { Wallet, Plus, Search, Receipt, Loader2 } from 'lucide-react'
 
-const expenses = [
-  { id: 'EXP-001', description: 'AWS Cloud Services', category: 'Infrastructure', amount: '$2,340', date: '2026-01-28', vendor: 'Amazon Web Services' },
-  { id: 'EXP-002', description: 'Staff Salaries - January', category: 'Payroll', amount: '$18,500', date: '2026-01-25', vendor: 'Internal' },
-  { id: 'EXP-003', description: 'Office Rent - February', category: 'Rent', amount: '$3,500', date: '2026-01-24', vendor: 'Harare Properties' },
-  { id: 'EXP-004', description: 'Microsoft 365 Licenses', category: 'Software', amount: '$450', date: '2026-01-22', vendor: 'Microsoft' },
-  { id: 'EXP-005', description: 'Training Materials', category: 'Operations', amount: '$800', date: '2026-01-20', vendor: 'Various' },
-  { id: 'EXP-006', description: 'Internet & Utilities', category: 'Utilities', amount: '$650', date: '2026-01-18', vendor: 'TelOne' },
-]
+interface Expense {
+  id: string
+  expense_number: string
+  description?: string
+  category?: string
+  vendor?: string
+  amount: number
+  expense_date: string
+  created_at: string
+}
 
 export default function ExpensesPage() {
+  const [expenses, setExpenses] = useState<Expense[]>([])
+  const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
+
+  useEffect(() => {
+    fetchExpenses()
+  }, [])
+
+  const fetchExpenses = async () => {
+    try {
+      setLoading(true)
+      const response = await fetch('/api/admin/expenses')
+      const result = await response.json()
+      if (result.data) setExpenses(result.data)
+    } catch (error) {
+      console.error('Error fetching expenses:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleDelete = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this expense?')) return
+    try {
+      const response = await fetch(`/api/admin/expenses/${id}`, { method: 'DELETE' })
+      if (response.ok) setExpenses(expenses.filter(e => e.id !== id))
+    } catch (error) {
+      console.error('Error deleting expense:', error)
+    }
+  }
+
+  const filteredExpenses = expenses.filter(expense =>
+    expense.expense_number?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    expense.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    expense.vendor?.toLowerCase().includes(searchQuery.toLowerCase())
+  )
 
   return (
     <div className="space-y-6">
@@ -46,37 +83,58 @@ export default function ExpensesPage() {
       </div>
 
       <div className="bg-white/5 border border-white/5 rounded-2xl overflow-hidden">
-        <table className="w-full">
-          <thead>
-            <tr className="text-left text-sm text-gray-500 border-b border-white/5 bg-white/5">
-              <th className="p-4 font-medium">ID</th>
-              <th className="p-4 font-medium">Description</th>
-              <th className="p-4 font-medium">Category</th>
-              <th className="p-4 font-medium">Vendor</th>
-              <th className="p-4 font-medium">Amount</th>
-              <th className="p-4 font-medium">Date</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-white/5">
-            {expenses.map((expense) => (
-              <tr key={expense.id} className="hover:bg-white/5">
-                <td className="p-4">
-                  <span className="flex items-center gap-2">
-                    <Wallet className="w-4 h-4 text-red-500" />
-                    <span className="font-medium text-[#00D4FF]">{expense.id}</span>
-                  </span>
-                </td>
-                <td className="p-4">{expense.description}</td>
-                <td className="p-4">
-                  <span className="px-2 py-1 rounded-full text-xs font-medium bg-white/5">{expense.category}</span>
-                </td>
-                <td className="p-4 text-gray-400">{expense.vendor}</td>
-                <td className="p-4 font-medium text-red-500">-{expense.amount}</td>
-                <td className="p-4 text-gray-400">{expense.date}</td>
+        {loading ? (
+          <div className="flex items-center justify-center py-12">
+            <Loader2 className="w-8 h-8 animate-spin text-[#005CFF]" />
+          </div>
+        ) : filteredExpenses.length === 0 ? (
+          <div className="text-center py-12">
+            <Wallet className="w-12 h-12 mx-auto text-gray-500 mb-4" />
+            <p className="text-gray-500">No expenses found</p>
+            <Link href="/admin/finance/expenses/new" className="text-[#00D4FF] hover:underline mt-2 inline-block">
+              Add your first expense
+            </Link>
+          </div>
+        ) : (
+          <table className="w-full">
+            <thead>
+              <tr className="text-left text-sm text-gray-500 border-b border-white/5 bg-white/5">
+                <th className="p-4 font-medium">ID</th>
+                <th className="p-4 font-medium">Description</th>
+                <th className="p-4 font-medium">Category</th>
+                <th className="p-4 font-medium">Vendor</th>
+                <th className="p-4 font-medium">Amount</th>
+                <th className="p-4 font-medium">Date</th>
+                <th className="p-4 font-medium">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-white/5">
+              {filteredExpenses.map((expense) => (
+                <tr key={expense.id} className="hover:bg-white/5">
+                  <td className="p-4">
+                    <span className="flex items-center gap-2">
+                      <Wallet className="w-4 h-4 text-red-500" />
+                      <span className="font-medium text-[#00D4FF]">{expense.expense_number}</span>
+                    </span>
+                  </td>
+                  <td className="p-4">{expense.description || 'N/A'}</td>
+                  <td className="p-4">
+                    <span className="px-2 py-1 rounded-full text-xs font-medium bg-white/5">{expense.category || 'N/A'}</span>
+                  </td>
+                  <td className="p-4 text-gray-400">{expense.vendor || 'N/A'}</td>
+                  <td className="p-4 font-medium text-red-500">-${expense.amount?.toLocaleString() || '0'}</td>
+                  <td className="p-4 text-gray-400">{expense.expense_date || new Date(expense.created_at).toLocaleDateString()}</td>
+                  <td className="p-4">
+                    <div className="flex items-center gap-2">
+                      <Link href={`/admin/finance/expenses/${expense.id}`} className="text-sm text-[#00D4FF] hover:underline">View</Link>
+                      <button onClick={() => handleDelete(expense.id)} className="text-sm text-red-500 hover:underline">Delete</button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
     </div>
   )

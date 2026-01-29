@@ -1,24 +1,55 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Building2, Plus, Search, Mail, Phone, MapPin, Globe } from 'lucide-react'
+import { Building2, Plus, Search, Mail, Phone, MapPin, Globe, Loader2, Trash2 } from 'lucide-react'
 
-const clients = [
-  { id: 1, name: 'ZimBank Ltd', contact: 'John Moyo', email: 'john@zimbank.co.zw', phone: '+263 77 123 4567', projects: 3, status: 'active' },
-  { id: 2, name: 'EcoBank Zimbabwe', contact: 'Sarah Chikwanha', email: 'sarah@ecobank.co.zw', phone: '+263 78 234 5678', projects: 2, status: 'active' },
-  { id: 3, name: 'Ministry of Health', contact: 'Michael Ndlovu', email: 'm.ndlovu@moh.gov.zw', phone: '+263 71 345 6789', projects: 1, status: 'active' },
-  { id: 4, name: 'TelOne', contact: 'Grace Mutasa', email: 'grace@telone.co.zw', phone: '+263 77 456 7890', projects: 2, status: 'active' },
-  { id: 5, name: 'Econet Wireless', contact: 'David Zimuto', email: 'd.zimuto@econet.co.zw', phone: '+263 78 567 8901', projects: 4, status: 'active' },
-  { id: 6, name: 'ZIMRA', contact: 'Tendai Maposa', email: 't.maposa@zimra.co.zw', phone: '+263 71 678 9012', projects: 1, status: 'completed' },
-]
+interface Client {
+  id: string
+  company_name: string
+  contact_person?: string
+  email?: string
+  phone?: string
+  industry?: string
+  status: string
+  created_at: string
+}
 
 export default function ClientsPage() {
+  const [clients, setClients] = useState<Client[]>([])
+  const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
 
+  useEffect(() => {
+    fetchClients()
+  }, [])
+
+  const fetchClients = async () => {
+    try {
+      setLoading(true)
+      const response = await fetch('/api/admin/clients')
+      const result = await response.json()
+      if (result.data) setClients(result.data)
+    } catch (error) {
+      console.error('Error fetching clients:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleDelete = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this client?')) return
+    try {
+      const response = await fetch(`/api/admin/clients/${id}`, { method: 'DELETE' })
+      if (response.ok) setClients(clients.filter(c => c.id !== id))
+    } catch (error) {
+      console.error('Error deleting client:', error)
+    }
+  }
+
   const filteredClients = clients.filter(client =>
-    client.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    client.contact.toLowerCase().includes(searchQuery.toLowerCase())
+    client.company_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    client.contact_person?.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
   return (
@@ -50,38 +81,59 @@ export default function ClientsPage() {
         </div>
       </div>
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredClients.map((client) => (
-          <div key={client.id} className="bg-white/5 border border-white/5 rounded-2xl p-6 hover:bg-white/10 transition-all">
-            <div className="flex items-start justify-between mb-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl flex items-center justify-center">
-                <Building2 className="w-6 h-6 text-white" />
+      {loading ? (
+        <div className="flex items-center justify-center py-12">
+          <Loader2 className="w-8 h-8 animate-spin text-[#005CFF]" />
+        </div>
+      ) : filteredClients.length === 0 ? (
+        <div className="text-center py-12 bg-white/5 rounded-2xl">
+          <Building2 className="w-12 h-12 mx-auto text-gray-500 mb-4" />
+          <p className="text-gray-500">No clients found</p>
+          <Link href="/admin/projects/clients/new" className="text-[#00D4FF] hover:underline mt-2 inline-block">
+            Add your first client
+          </Link>
+        </div>
+      ) : (
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredClients.map((client) => (
+            <div key={client.id} className="bg-white/5 border border-white/5 rounded-2xl p-6 hover:bg-white/10 transition-all">
+              <div className="flex items-start justify-between mb-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl flex items-center justify-center">
+                  <Building2 className="w-6 h-6 text-white" />
+                </div>
+                <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                  client.status === 'active' ? 'bg-green-500/10 text-green-500' : 'bg-gray-500/10 text-gray-500'
+                }`}>
+                  {client.status}
+                </span>
               </div>
-              <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                client.status === 'active' ? 'bg-green-500/10 text-green-500' : 'bg-gray-500/10 text-gray-500'
-              }`}>
-                {client.status}
-              </span>
-            </div>
-            <h3 className="font-semibold text-lg mb-1">{client.name}</h3>
-            <p className="text-sm text-gray-500 mb-4">{client.contact}</p>
-            <div className="space-y-2 mb-4 text-sm">
-              <div className="flex items-center gap-2 text-gray-400">
-                <Mail className="w-4 h-4" />
-                {client.email}
+              <h3 className="font-semibold text-lg mb-1">{client.company_name}</h3>
+              <p className="text-sm text-gray-500 mb-4">{client.contact_person || 'No contact'}</p>
+              <div className="space-y-2 mb-4 text-sm">
+                {client.email && (
+                  <div className="flex items-center gap-2 text-gray-400">
+                    <Mail className="w-4 h-4" />
+                    {client.email}
+                  </div>
+                )}
+                {client.phone && (
+                  <div className="flex items-center gap-2 text-gray-400">
+                    <Phone className="w-4 h-4" />
+                    {client.phone}
+                  </div>
+                )}
               </div>
-              <div className="flex items-center gap-2 text-gray-400">
-                <Phone className="w-4 h-4" />
-                {client.phone}
+              <div className="flex items-center justify-between pt-4 border-t border-white/5">
+                <span className="text-sm text-gray-500">{client.industry || 'N/A'}</span>
+                <div className="flex items-center gap-2">
+                  <Link href={`/admin/projects/clients/${client.id}`} className="text-sm text-[#00D4FF] hover:underline">View</Link>
+                  <button onClick={() => handleDelete(client.id)} className="text-sm text-red-500 hover:underline">Delete</button>
+                </div>
               </div>
             </div>
-            <div className="flex items-center justify-between pt-4 border-t border-white/5">
-              <span className="text-sm text-gray-500">{client.projects} projects</span>
-              <Link href={`/admin/projects/clients/${client.id}`} className="text-sm text-[#00D4FF] hover:underline">View Details</Link>
-            </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

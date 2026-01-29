@@ -1,19 +1,57 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Users, Plus, Search, Mail, Phone, Building2 } from 'lucide-react'
+import { Users, Plus, Search, Mail, Phone, Building2, Loader2 } from 'lucide-react'
 
-const contacts = [
-  { id: 1, name: 'John Moyo', email: 'john@zimbank.co.zw', phone: '+263 77 123 4567', company: 'ZimBank Ltd', role: 'IT Manager', type: 'client' },
-  { id: 2, name: 'Sarah Chikwanha', email: 'sarah@ecobank.co.zw', phone: '+263 78 234 5678', company: 'EcoBank Zimbabwe', role: 'CTO', type: 'client' },
-  { id: 3, name: 'Michael Ndlovu', email: 'm.ndlovu@moh.gov.zw', phone: '+263 71 345 6789', company: 'Ministry of Health', role: 'Director', type: 'client' },
-  { id: 4, name: 'Grace Mutasa', email: 'grace@telone.co.zw', phone: '+263 77 456 7890', company: 'TelOne', role: 'Procurement', type: 'client' },
-  { id: 5, name: 'David Zimuto', email: 'd.zimuto@econet.co.zw', phone: '+263 78 567 8901', company: 'Econet Wireless', role: 'IT Director', type: 'client' },
-]
+interface Contact {
+  id: string
+  name: string
+  email?: string
+  phone?: string
+  company?: string
+  role?: string
+  contact_type?: string
+  created_at: string
+}
 
 export default function ContactsPage() {
+  const [contacts, setContacts] = useState<Contact[]>([])
+  const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
+
+  useEffect(() => {
+    fetchContacts()
+  }, [])
+
+  const fetchContacts = async () => {
+    try {
+      setLoading(true)
+      const response = await fetch('/api/admin/contacts')
+      const result = await response.json()
+      if (result.data) setContacts(result.data)
+    } catch (error) {
+      console.error('Error fetching contacts:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleDelete = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this contact?')) return
+    try {
+      const response = await fetch(`/api/admin/contacts/${id}`, { method: 'DELETE' })
+      if (response.ok) setContacts(contacts.filter(c => c.id !== id))
+    } catch (error) {
+      console.error('Error deleting contact:', error)
+    }
+  }
+
+  const filteredContacts = contacts.filter(contact =>
+    contact.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    contact.company?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    contact.email?.toLowerCase().includes(searchQuery.toLowerCase())
+  )
 
   return (
     <div className="space-y-6">
@@ -44,39 +82,53 @@ export default function ContactsPage() {
         </div>
       </div>
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {contacts.map((contact) => (
-          <div key={contact.id} className="bg-white/5 border border-white/5 rounded-2xl p-6 hover:bg-white/10 transition-all">
-            <div className="flex items-start gap-4 mb-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-full flex items-center justify-center text-white font-medium">
-                {contact.name.split(' ').map(n => n[0]).join('')}
+      {loading ? (
+        <div className="flex items-center justify-center py-12">
+          <Loader2 className="w-8 h-8 animate-spin text-[#005CFF]" />
+        </div>
+      ) : filteredContacts.length === 0 ? (
+        <div className="text-center py-12 bg-white/5 border border-white/5 rounded-2xl">
+          <Users className="w-12 h-12 mx-auto text-gray-500 mb-4" />
+          <p className="text-gray-500">No contacts found</p>
+          <Link href="/admin/crm/contacts/new" className="text-[#00D4FF] hover:underline mt-2 inline-block">
+            Add your first contact
+          </Link>
+        </div>
+      ) : (
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredContacts.map((contact) => (
+            <div key={contact.id} className="bg-white/5 border border-white/5 rounded-2xl p-6 hover:bg-white/10 transition-all">
+              <div className="flex items-start gap-4 mb-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-full flex items-center justify-center text-white font-medium">
+                  {contact.name?.split(' ').map(n => n[0]).join('') || '?'}
+                </div>
+                <div>
+                  <h3 className="font-semibold">{contact.name}</h3>
+                  <p className="text-sm text-gray-500">{contact.role || 'No role'}</p>
+                </div>
               </div>
-              <div>
-                <h3 className="font-semibold">{contact.name}</h3>
-                <p className="text-sm text-gray-500">{contact.role}</p>
+              <div className="space-y-2 text-sm">
+                <div className="flex items-center gap-2 text-gray-400">
+                  <Building2 className="w-4 h-4" />
+                  {contact.company || 'No company'}
+                </div>
+                <div className="flex items-center gap-2 text-gray-400">
+                  <Mail className="w-4 h-4" />
+                  {contact.email || 'No email'}
+                </div>
+                <div className="flex items-center gap-2 text-gray-400">
+                  <Phone className="w-4 h-4" />
+                  {contact.phone || 'No phone'}
+                </div>
+              </div>
+              <div className="flex items-center gap-2 mt-4 pt-4 border-t border-white/5">
+                <Link href={`/admin/crm/contacts/${contact.id}`} className="flex-1 py-2 text-center text-sm bg-white/5 hover:bg-white/10 rounded-lg">View</Link>
+                <button onClick={() => handleDelete(contact.id)} className="flex-1 py-2 text-center text-sm bg-red-500/10 hover:bg-red-500/20 text-red-500 rounded-lg">Delete</button>
               </div>
             </div>
-            <div className="space-y-2 text-sm">
-              <div className="flex items-center gap-2 text-gray-400">
-                <Building2 className="w-4 h-4" />
-                {contact.company}
-              </div>
-              <div className="flex items-center gap-2 text-gray-400">
-                <Mail className="w-4 h-4" />
-                {contact.email}
-              </div>
-              <div className="flex items-center gap-2 text-gray-400">
-                <Phone className="w-4 h-4" />
-                {contact.phone}
-              </div>
-            </div>
-            <div className="flex items-center gap-2 mt-4 pt-4 border-t border-white/5">
-              <Link href={`/admin/crm/contacts/${contact.id}`} className="flex-1 py-2 text-center text-sm bg-white/5 hover:bg-white/10 rounded-lg">View</Link>
-              <Link href={`/admin/crm/contacts/${contact.id}/edit`} className="flex-1 py-2 text-center text-sm bg-white/5 hover:bg-white/10 rounded-lg">Edit</Link>
-            </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

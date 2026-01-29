@@ -1,17 +1,19 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { ShoppingCart, Plus, Search, Eye, Truck, Package } from 'lucide-react'
+import { ShoppingCart, Plus, Search, Eye, Truck, Package, Loader2 } from 'lucide-react'
 
-const orders = [
-  { id: 'ORD-001', client: 'Ministry of Health', items: 5, total: '$8,500', date: '2026-01-29', status: 'processing' },
-  { id: 'ORD-002', client: 'ZimBank Ltd', items: 3, total: '$4,200', date: '2026-01-28', status: 'shipped' },
-  { id: 'ORD-003', client: 'Econet Wireless', items: 10, total: '$15,000', date: '2026-01-28', status: 'pending' },
-  { id: 'ORD-004', client: 'TelOne', items: 2, total: '$2,800', date: '2026-01-27', status: 'delivered' },
-  { id: 'ORD-005', client: 'University of Zimbabwe', items: 8, total: '$12,400', date: '2026-01-26', status: 'processing' },
-  { id: 'ORD-006', client: 'ZIMRA', items: 4, total: '$6,000', date: '2026-01-25', status: 'delivered' },
-]
+interface Order {
+  id: string
+  order_number: string
+  client_id?: string
+  clients?: { company_name: string }
+  total_amount: number
+  order_date: string
+  status: string
+  created_at: string
+}
 
 const getStatusColor = (status: string) => {
   switch (status) {
@@ -25,7 +27,41 @@ const getStatusColor = (status: string) => {
 }
 
 export default function OrdersPage() {
+  const [orders, setOrders] = useState<Order[]>([])
+  const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
+
+  useEffect(() => {
+    fetchOrders()
+  }, [])
+
+  const fetchOrders = async () => {
+    try {
+      setLoading(true)
+      const response = await fetch('/api/admin/orders')
+      const result = await response.json()
+      if (result.data) setOrders(result.data)
+    } catch (error) {
+      console.error('Error fetching orders:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleDelete = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this order?')) return
+    try {
+      const response = await fetch(`/api/admin/orders/${id}`, { method: 'DELETE' })
+      if (response.ok) setOrders(orders.filter(o => o.id !== id))
+    } catch (error) {
+      console.error('Error deleting order:', error)
+    }
+  }
+
+  const filteredOrders = orders.filter(order =>
+    order.order_number?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    order.clients?.company_name?.toLowerCase().includes(searchQuery.toLowerCase())
+  )
 
   return (
     <div className="space-y-6">
@@ -57,52 +93,58 @@ export default function OrdersPage() {
       </div>
 
       <div className="bg-white/5 border border-white/5 rounded-2xl overflow-hidden">
-        <table className="w-full">
-          <thead>
-            <tr className="text-left text-sm text-gray-500 border-b border-white/5 bg-white/5">
-              <th className="p-4 font-medium">Order ID</th>
-              <th className="p-4 font-medium">Client</th>
-              <th className="p-4 font-medium">Items</th>
-              <th className="p-4 font-medium">Total</th>
-              <th className="p-4 font-medium">Date</th>
-              <th className="p-4 font-medium">Status</th>
-              <th className="p-4 font-medium">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-white/5">
-            {orders.map((order) => (
-              <tr key={order.id} className="hover:bg-white/5">
-                <td className="p-4">
-                  <span className="flex items-center gap-2">
-                    <ShoppingCart className="w-4 h-4 text-orange-500" />
-                    <span className="font-medium text-[#00D4FF]">{order.id}</span>
-                  </span>
-                </td>
-                <td className="p-4">{order.client}</td>
-                <td className="p-4 text-gray-400">{order.items} items</td>
-                <td className="p-4 font-medium">{order.total}</td>
-                <td className="p-4 text-gray-400">{order.date}</td>
-                <td className="p-4">
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
-                    {order.status}
-                  </span>
-                </td>
-                <td className="p-4">
-                  <div className="flex items-center gap-2">
-                    <Link href={`/admin/retail/orders/${order.id}`} className="p-2 hover:bg-white/10 rounded-lg">
-                      <Eye className="w-4 h-4 text-gray-400" />
-                    </Link>
-                    {order.status === 'processing' && (
-                      <button className="p-2 hover:bg-white/10 rounded-lg" title="Mark as Shipped">
-                        <Truck className="w-4 h-4 text-blue-500" />
-                      </button>
-                    )}
-                  </div>
-                </td>
+        {loading ? (
+          <div className="flex items-center justify-center py-12">
+            <Loader2 className="w-8 h-8 animate-spin text-[#005CFF]" />
+          </div>
+        ) : filteredOrders.length === 0 ? (
+          <div className="text-center py-12">
+            <ShoppingCart className="w-12 h-12 mx-auto text-gray-500 mb-4" />
+            <p className="text-gray-500">No orders found</p>
+            <Link href="/admin/retail/orders/new" className="text-[#00D4FF] hover:underline mt-2 inline-block">
+              Create your first order
+            </Link>
+          </div>
+        ) : (
+          <table className="w-full">
+            <thead>
+              <tr className="text-left text-sm text-gray-500 border-b border-white/5 bg-white/5">
+                <th className="p-4 font-medium">Order ID</th>
+                <th className="p-4 font-medium">Client</th>
+                <th className="p-4 font-medium">Total</th>
+                <th className="p-4 font-medium">Date</th>
+                <th className="p-4 font-medium">Status</th>
+                <th className="p-4 font-medium">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-white/5">
+              {filteredOrders.map((order) => (
+                <tr key={order.id} className="hover:bg-white/5">
+                  <td className="p-4">
+                    <span className="flex items-center gap-2">
+                      <ShoppingCart className="w-4 h-4 text-orange-500" />
+                      <span className="font-medium text-[#00D4FF]">{order.order_number}</span>
+                    </span>
+                  </td>
+                  <td className="p-4">{order.clients?.company_name || 'N/A'}</td>
+                  <td className="p-4 font-medium">${order.total_amount?.toLocaleString() || '0'}</td>
+                  <td className="p-4 text-gray-400">{order.order_date || new Date(order.created_at).toLocaleDateString()}</td>
+                  <td className="p-4">
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
+                      {order.status}
+                    </span>
+                  </td>
+                  <td className="p-4">
+                    <div className="flex items-center gap-2">
+                      <Link href={`/admin/retail/orders/${order.id}`} className="text-sm text-[#00D4FF] hover:underline">View</Link>
+                      <button onClick={() => handleDelete(order.id)} className="text-sm text-red-500 hover:underline">Delete</button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
     </div>
   )
