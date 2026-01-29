@@ -144,14 +144,8 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://cubeadm.co.zw" />
       </head>
       <body className={`${inter.className} antialiased`}>
-        <OrganizationSchema />
-        <LocalBusinessSchema />
-        <WebsiteSchema />
         <Providers>
-          <Header />
-          <main>{children}</main>
-          <Footer />
-          <WhatsAppButton />
+          {children}
         </Providers>
       </body>
     </html>
