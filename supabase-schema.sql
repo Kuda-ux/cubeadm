@@ -1,6 +1,6 @@
 -- CubeADM Database Schema for Supabase
 -- Run this SQL in your Supabase SQL Editor (Dashboard > SQL Editor > New Query)
--- Website: https://kubeadm.co.zw
+-- Website: https://cubeadm.co.zw
 
 -- Enable UUID extension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
@@ -204,7 +204,7 @@ INSERT INTO products (name, category, brand, description, image_url, price, rati
 
 -- =====================================================
 -- STEP 4: CIMS Admin Dashboard Tables
--- These tables power the admin dashboard at https://kubeadm.co.zw/admin
+-- These tables power the admin dashboard at https://cubeadm.co.zw/admin
 -- =====================================================
 
 -- Students Table (Training Module)
@@ -610,5 +610,5 @@ CREATE INDEX IF NOT EXISTS idx_attendance_employee ON attendance(employee_id);
 CREATE INDEX IF NOT EXISTS idx_attendance_date ON attendance(date);
 
 -- =====================================================
--- Schema Complete for https://kubeadm.co.zw
+-- Schema Complete for https://cubeadm.co.zw
 -- =====================================================
