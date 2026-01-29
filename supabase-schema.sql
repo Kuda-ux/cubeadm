@@ -1,18 +1,37 @@
 -- CubeADM Database Schema for Supabase
 -- Run this SQL in your Supabase SQL Editor (Dashboard > SQL Editor > New Query)
+-- Website: https://kubeadm.co.zw
 
 -- Enable UUID extension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+-- =====================================================
+-- STEP 1: Drop existing tables to avoid conflicts
+-- Run this section FIRST if you have existing tables
+-- =====================================================
+
+-- Drop dependent tables first (order matters due to foreign keys)
+DROP TABLE IF EXISTS cart_items CASCADE;
+DROP TABLE IF EXISTS orders CASCADE;
+DROP TABLE IF EXISTS products CASCADE;
+
+-- =====================================================
+-- STEP 2: Create Core Website Tables
+-- =====================================================
 
 -- Contacts Table (for contact form submissions)
 CREATE TABLE IF NOT EXISTS contacts (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   name TEXT NOT NULL,
   email TEXT NOT NULL,
   phone TEXT,
   company TEXT,
-  message TEXT NOT NULL,
+  role TEXT,
+  contact_type TEXT DEFAULT 'client',
+  message TEXT,
+  notes TEXT,
   status TEXT DEFAULT 'new' CHECK (status IN ('new', 'read', 'replied'))
 );
 
@@ -57,30 +76,41 @@ ALTER TABLE newsletter_subscribers ENABLE ROW LEVEL SECURITY;
 ALTER TABLE quote_requests ENABLE ROW LEVEL SECURITY;
 
 -- Create policies to allow anonymous inserts (for form submissions)
--- Drop existing policies first to avoid conflicts
 DROP POLICY IF EXISTS "Allow anonymous inserts" ON contacts;
 DROP POLICY IF EXISTS "Allow anonymous inserts" ON enrollments;
 DROP POLICY IF EXISTS "Allow anonymous inserts" ON newsletter_subscribers;
 DROP POLICY IF EXISTS "Allow anonymous inserts" ON quote_requests;
+DROP POLICY IF EXISTS "Service role full access contacts" ON contacts;
 
 CREATE POLICY "Allow anonymous inserts" ON contacts FOR INSERT WITH CHECK (true);
 CREATE POLICY "Allow anonymous inserts" ON enrollments FOR INSERT WITH CHECK (true);
 CREATE POLICY "Allow anonymous inserts" ON newsletter_subscribers FOR INSERT WITH CHECK (true);
 CREATE POLICY "Allow anonymous inserts" ON quote_requests FOR INSERT WITH CHECK (true);
+CREATE POLICY "Service role full access contacts" ON contacts FOR ALL USING (true);
 
--- Products Table
+-- =====================================================
+-- STEP 3: E-Commerce Tables (Products, Cart, Orders)
+-- =====================================================
+
+-- Products Table (UUID primary key)
 CREATE TABLE IF NOT EXISTS products (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  sku TEXT,
   name TEXT NOT NULL,
-  category TEXT NOT NULL CHECK (category IN ('computing', 'networking', 'servers', 'cloud')),
-  brand TEXT NOT NULL,
-  description TEXT NOT NULL,
-  image_url TEXT NOT NULL,
-  price DECIMAL(10,2) NOT NULL,
+  category TEXT NOT NULL,
+  brand TEXT,
+  description TEXT,
+  image_url TEXT,
+  price DECIMAL(10,2) NOT NULL DEFAULT 0,
+  cost_price DECIMAL(10,2),
+  stock_quantity INTEGER DEFAULT 0,
+  reorder_level INTEGER DEFAULT 5,
   rating DECIMAL(2,1) DEFAULT 4.5,
   in_stock BOOLEAN DEFAULT true,
   featured BOOLEAN DEFAULT false,
+  is_active BOOLEAN DEFAULT true,
   specs JSONB
 );
 
@@ -94,7 +124,7 @@ CREATE TABLE IF NOT EXISTS cart_items (
   UNIQUE(user_id, product_id)
 );
 
--- Orders Table
+-- Orders Table (for e-commerce)
 CREATE TABLE IF NOT EXISTS orders (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
@@ -171,3 +201,414 @@ INSERT INTO products (name, category, brand, description, image_url, price, rati
 ('Nutanix HCI Starter Pack', 'cloud', 'Nutanix', 'Hyper-converged infrastructure starter bundle. Simplified datacenter in a box.', 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=600&q=80', 24999.00, 4.8, true, false, '{"nodes": "3-Node Cluster", "hypervisor": "AHV or ESXi", "storage": "Hybrid or All-Flash", "features": "AOS, Prism, Files", "management": "Prism Central", "support": "1 Year", "deployment": "On-premises/Cloud", "warranty": "3 Years"}'),
 ('Microsoft Azure Stack HCI', 'cloud', 'Microsoft', 'Hybrid cloud solution with Azure integration. Run Azure services on-premises.', 'https://images.unsplash.com/photo-1667372393119-3d4c48d07fc9?w=600&q=80', 19999.00, 4.7, true, true, '{"nodes": "2-16 Node Cluster", "hypervisor": "Azure Stack HCI OS", "storage": "Storage Spaces Direct", "features": "Azure Arc, AKS, AVD", "management": "Windows Admin Center", "licensing": "Per Core", "integration": "Azure Portal", "warranty": "Hardware Dependent"}'),
 ('Veeam Backup & Replication', 'cloud', 'Veeam', 'Enterprise backup solution for virtual environments. Comprehensive data protection.', 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=600&q=80', 2999.00, 4.9, true, false, '{"license_type": "Per Workload", "platforms": "VMware, Hyper-V, AWS, Azure", "features": "Backup, Replication, CDP", "recovery": "Instant VM Recovery", "storage": "Any Storage Target", "support": "1 Year", "deployment": "On-premises/Cloud", "warranty": "Software License"}');
+
+-- =====================================================
+-- STEP 4: CIMS Admin Dashboard Tables
+-- These tables power the admin dashboard at https://kubeadm.co.zw/admin
+-- =====================================================
+
+-- Students Table (Training Module)
+CREATE TABLE IF NOT EXISTS students (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  student_number TEXT UNIQUE,
+  first_name TEXT NOT NULL,
+  last_name TEXT NOT NULL,
+  email TEXT,
+  phone TEXT,
+  date_of_birth DATE,
+  gender TEXT,
+  national_id TEXT,
+  address TEXT,
+  city TEXT,
+  country TEXT DEFAULT 'Zimbabwe',
+  education_level TEXT,
+  occupation TEXT,
+  employer TEXT,
+  emergency_contact_name TEXT,
+  emergency_contact_phone TEXT,
+  photo_url TEXT,
+  status TEXT DEFAULT 'active' CHECK (status IN ('active', 'inactive', 'graduated', 'suspended')),
+  notes TEXT
+);
+
+-- Courses Table (Training Module)
+CREATE TABLE IF NOT EXISTS courses (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  name TEXT NOT NULL,
+  code TEXT,
+  description TEXT,
+  category TEXT,
+  duration_hours INTEGER,
+  duration_weeks INTEGER,
+  price DECIMAL(10,2),
+  currency TEXT DEFAULT 'USD',
+  certification_body TEXT,
+  prerequisites TEXT,
+  max_students INTEGER DEFAULT 20,
+  is_active BOOLEAN DEFAULT true,
+  image_url TEXT
+);
+
+-- Clients Table (Projects Module)
+CREATE TABLE IF NOT EXISTS clients (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  company_name TEXT NOT NULL,
+  contact_person TEXT,
+  email TEXT,
+  phone TEXT,
+  address TEXT,
+  city TEXT,
+  country TEXT DEFAULT 'Zimbabwe',
+  industry TEXT,
+  website TEXT,
+  tax_id TEXT,
+  payment_terms INTEGER DEFAULT 30,
+  credit_limit DECIMAL(10,2),
+  status TEXT DEFAULT 'active' CHECK (status IN ('active', 'inactive')),
+  notes TEXT
+);
+
+-- Projects Table
+CREATE TABLE IF NOT EXISTS projects (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  client_id UUID REFERENCES clients(id),
+  name TEXT NOT NULL,
+  code TEXT,
+  description TEXT,
+  type TEXT,
+  status TEXT DEFAULT 'planning' CHECK (status IN ('planning', 'in_progress', 'on_hold', 'completed', 'cancelled')),
+  priority TEXT DEFAULT 'medium' CHECK (priority IN ('low', 'medium', 'high', 'critical')),
+  start_date DATE,
+  end_date DATE,
+  deadline DATE,
+  budget DECIMAL(10,2),
+  actual_cost DECIMAL(10,2),
+  progress INTEGER DEFAULT 0,
+  project_manager_id UUID,
+  technologies TEXT[],
+  repository_url TEXT,
+  staging_url TEXT,
+  production_url TEXT
+);
+
+-- Tasks Table (Projects Module)
+CREATE TABLE IF NOT EXISTS tasks (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  project_id UUID REFERENCES projects(id),
+  parent_task_id UUID,
+  title TEXT NOT NULL,
+  description TEXT,
+  assigned_to UUID,
+  status TEXT DEFAULT 'todo' CHECK (status IN ('todo', 'in_progress', 'review', 'completed')),
+  priority TEXT DEFAULT 'medium' CHECK (priority IN ('low', 'medium', 'high', 'critical')),
+  estimated_hours DECIMAL(5,2),
+  actual_hours DECIMAL(5,2),
+  start_date DATE,
+  due_date DATE,
+  completed_at TIMESTAMP WITH TIME ZONE,
+  tags TEXT[]
+);
+
+-- Support Tickets Table
+CREATE TABLE IF NOT EXISTS tickets (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  ticket_number TEXT UNIQUE,
+  client_id UUID REFERENCES clients(id),
+  project_id UUID REFERENCES projects(id),
+  subject TEXT NOT NULL,
+  description TEXT,
+  category TEXT,
+  priority TEXT DEFAULT 'medium' CHECK (priority IN ('low', 'medium', 'high', 'critical')),
+  status TEXT DEFAULT 'open' CHECK (status IN ('open', 'in_progress', 'resolved', 'closed')),
+  assigned_to UUID,
+  sla_deadline TIMESTAMP WITH TIME ZONE,
+  resolved_at TIMESTAMP WITH TIME ZONE,
+  resolution TEXT,
+  satisfaction_rating INTEGER
+);
+
+-- Suppliers Table (Retail Module)
+CREATE TABLE IF NOT EXISTS suppliers (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  name TEXT NOT NULL,
+  contact_person TEXT,
+  email TEXT,
+  phone TEXT,
+  address TEXT,
+  city TEXT,
+  country TEXT,
+  payment_terms INTEGER,
+  tax_id TEXT,
+  bank_details JSONB,
+  status TEXT DEFAULT 'active' CHECK (status IN ('active', 'inactive')),
+  notes TEXT
+);
+
+-- Sales Orders Table (Retail Module)
+CREATE TABLE IF NOT EXISTS sales_orders (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  order_number TEXT UNIQUE,
+  client_id UUID REFERENCES clients(id),
+  order_date DATE DEFAULT CURRENT_DATE,
+  delivery_date DATE,
+  status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'processing', 'shipped', 'delivered', 'cancelled')),
+  subtotal DECIMAL(10,2),
+  tax DECIMAL(10,2),
+  discount DECIMAL(10,2),
+  total DECIMAL(10,2),
+  payment_status TEXT DEFAULT 'unpaid' CHECK (payment_status IN ('unpaid', 'partial', 'paid')),
+  shipping_address TEXT,
+  notes TEXT,
+  created_by UUID
+);
+
+-- Invoices Table (Finance Module)
+CREATE TABLE IF NOT EXISTS invoices (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  invoice_number TEXT UNIQUE,
+  client_id UUID REFERENCES clients(id),
+  student_id UUID REFERENCES students(id),
+  invoice_date DATE DEFAULT CURRENT_DATE,
+  due_date DATE,
+  status TEXT DEFAULT 'draft' CHECK (status IN ('draft', 'sent', 'paid', 'overdue', 'cancelled')),
+  subtotal DECIMAL(10,2),
+  tax DECIMAL(10,2),
+  discount DECIMAL(10,2),
+  total DECIMAL(10,2),
+  amount_paid DECIMAL(10,2) DEFAULT 0,
+  balance_due DECIMAL(10,2),
+  currency TEXT DEFAULT 'USD',
+  notes TEXT,
+  terms TEXT,
+  reference_type TEXT,
+  reference_id UUID,
+  created_by UUID
+);
+
+-- Payments Table (Finance Module)
+CREATE TABLE IF NOT EXISTS payments (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  payment_number TEXT UNIQUE,
+  invoice_id UUID REFERENCES invoices(id),
+  client_id UUID REFERENCES clients(id),
+  student_id UUID REFERENCES students(id),
+  amount DECIMAL(10,2) NOT NULL,
+  currency TEXT DEFAULT 'USD',
+  payment_method TEXT,
+  payment_date DATE DEFAULT CURRENT_DATE,
+  reference TEXT,
+  status TEXT DEFAULT 'completed' CHECK (status IN ('pending', 'completed', 'failed', 'refunded')),
+  notes TEXT,
+  received_by UUID
+);
+
+-- Expenses Table (Finance Module)
+CREATE TABLE IF NOT EXISTS expenses (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  expense_number TEXT UNIQUE,
+  category TEXT,
+  description TEXT NOT NULL,
+  amount DECIMAL(10,2) NOT NULL,
+  currency TEXT DEFAULT 'USD',
+  expense_date DATE DEFAULT CURRENT_DATE,
+  vendor TEXT,
+  payment_method TEXT,
+  receipt_url TEXT,
+  status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'rejected', 'paid')),
+  approved_by UUID,
+  submitted_by UUID,
+  project_id UUID REFERENCES projects(id),
+  notes TEXT
+);
+
+-- Leads Table (CRM Module)
+CREATE TABLE IF NOT EXISTS leads (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  source TEXT,
+  first_name TEXT,
+  last_name TEXT,
+  email TEXT,
+  phone TEXT,
+  company TEXT,
+  job_title TEXT,
+  interest TEXT,
+  status TEXT DEFAULT 'new' CHECK (status IN ('new', 'contacted', 'qualified', 'proposal', 'won', 'lost')),
+  score INTEGER DEFAULT 0,
+  assigned_to UUID,
+  notes TEXT,
+  converted_to_client_id UUID REFERENCES clients(id),
+  converted_to_student_id UUID REFERENCES students(id),
+  converted_at TIMESTAMP WITH TIME ZONE
+);
+
+-- Employees Table (HR Module)
+CREATE TABLE IF NOT EXISTS employees (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  user_id UUID,
+  employee_number TEXT UNIQUE,
+  first_name TEXT NOT NULL,
+  last_name TEXT NOT NULL,
+  email TEXT,
+  phone TEXT,
+  date_of_birth DATE,
+  gender TEXT,
+  national_id TEXT,
+  address TEXT,
+  city TEXT,
+  country TEXT DEFAULT 'Zimbabwe',
+  department TEXT,
+  position TEXT,
+  employment_type TEXT,
+  hire_date DATE,
+  contract_end_date DATE,
+  salary DECIMAL(10,2),
+  bank_name TEXT,
+  bank_account TEXT,
+  emergency_contact_name TEXT,
+  emergency_contact_phone TEXT,
+  photo_url TEXT,
+  status TEXT DEFAULT 'active' CHECK (status IN ('active', 'inactive', 'on_leave', 'terminated'))
+);
+
+-- Leave Requests Table (HR Module)
+CREATE TABLE IF NOT EXISTS leave_requests (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  employee_id UUID REFERENCES employees(id),
+  leave_type TEXT NOT NULL,
+  start_date DATE NOT NULL,
+  end_date DATE NOT NULL,
+  days INTEGER,
+  reason TEXT,
+  status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'rejected')),
+  approved_by UUID,
+  approved_at TIMESTAMP WITH TIME ZONE,
+  notes TEXT
+);
+
+-- Payroll Table (HR Module)
+CREATE TABLE IF NOT EXISTS payroll (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  employee_id UUID REFERENCES employees(id),
+  pay_period TEXT,
+  pay_period_start DATE,
+  pay_period_end DATE,
+  base_salary DECIMAL(10,2),
+  allowances DECIMAL(10,2) DEFAULT 0,
+  deductions DECIMAL(10,2) DEFAULT 0,
+  tax DECIMAL(10,2) DEFAULT 0,
+  net_salary DECIMAL(10,2),
+  payment_date DATE,
+  payment_method TEXT,
+  status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'processed', 'paid')),
+  paid_at TIMESTAMP WITH TIME ZONE,
+  notes TEXT
+);
+
+-- Attendance Table (HR Module)
+CREATE TABLE IF NOT EXISTS attendance (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  employee_id UUID REFERENCES employees(id),
+  date DATE NOT NULL,
+  check_in TIME,
+  check_out TIME,
+  status TEXT DEFAULT 'present' CHECK (status IN ('present', 'absent', 'late', 'leave')),
+  notes TEXT
+);
+
+-- =====================================================
+-- STEP 5: Enable RLS and Policies for CIMS Tables
+-- =====================================================
+
+ALTER TABLE students ENABLE ROW LEVEL SECURITY;
+ALTER TABLE courses ENABLE ROW LEVEL SECURITY;
+ALTER TABLE clients ENABLE ROW LEVEL SECURITY;
+ALTER TABLE projects ENABLE ROW LEVEL SECURITY;
+ALTER TABLE tasks ENABLE ROW LEVEL SECURITY;
+ALTER TABLE tickets ENABLE ROW LEVEL SECURITY;
+ALTER TABLE suppliers ENABLE ROW LEVEL SECURITY;
+ALTER TABLE sales_orders ENABLE ROW LEVEL SECURITY;
+ALTER TABLE invoices ENABLE ROW LEVEL SECURITY;
+ALTER TABLE payments ENABLE ROW LEVEL SECURITY;
+ALTER TABLE expenses ENABLE ROW LEVEL SECURITY;
+ALTER TABLE leads ENABLE ROW LEVEL SECURITY;
+ALTER TABLE employees ENABLE ROW LEVEL SECURITY;
+ALTER TABLE leave_requests ENABLE ROW LEVEL SECURITY;
+ALTER TABLE payroll ENABLE ROW LEVEL SECURITY;
+ALTER TABLE attendance ENABLE ROW LEVEL SECURITY;
+
+-- Service role has full access to all CIMS tables (for admin API)
+CREATE POLICY "Service role full access" ON students FOR ALL USING (true);
+CREATE POLICY "Service role full access" ON courses FOR ALL USING (true);
+CREATE POLICY "Service role full access" ON clients FOR ALL USING (true);
+CREATE POLICY "Service role full access" ON projects FOR ALL USING (true);
+CREATE POLICY "Service role full access" ON tasks FOR ALL USING (true);
+CREATE POLICY "Service role full access" ON tickets FOR ALL USING (true);
+CREATE POLICY "Service role full access" ON suppliers FOR ALL USING (true);
+CREATE POLICY "Service role full access" ON sales_orders FOR ALL USING (true);
+CREATE POLICY "Service role full access" ON invoices FOR ALL USING (true);
+CREATE POLICY "Service role full access" ON payments FOR ALL USING (true);
+CREATE POLICY "Service role full access" ON expenses FOR ALL USING (true);
+CREATE POLICY "Service role full access" ON leads FOR ALL USING (true);
+CREATE POLICY "Service role full access" ON employees FOR ALL USING (true);
+CREATE POLICY "Service role full access" ON leave_requests FOR ALL USING (true);
+CREATE POLICY "Service role full access" ON payroll FOR ALL USING (true);
+CREATE POLICY "Service role full access" ON attendance FOR ALL USING (true);
+
+-- =====================================================
+-- STEP 6: Create Indexes for CIMS Tables
+-- =====================================================
+
+CREATE INDEX IF NOT EXISTS idx_students_status ON students(status);
+CREATE INDEX IF NOT EXISTS idx_students_email ON students(email);
+CREATE INDEX IF NOT EXISTS idx_courses_category ON courses(category);
+CREATE INDEX IF NOT EXISTS idx_clients_status ON clients(status);
+CREATE INDEX IF NOT EXISTS idx_projects_status ON projects(status);
+CREATE INDEX IF NOT EXISTS idx_projects_client ON projects(client_id);
+CREATE INDEX IF NOT EXISTS idx_tasks_project ON tasks(project_id);
+CREATE INDEX IF NOT EXISTS idx_tasks_status ON tasks(status);
+CREATE INDEX IF NOT EXISTS idx_tickets_status ON tickets(status);
+CREATE INDEX IF NOT EXISTS idx_invoices_status ON invoices(status);
+CREATE INDEX IF NOT EXISTS idx_invoices_client ON invoices(client_id);
+CREATE INDEX IF NOT EXISTS idx_payments_invoice ON payments(invoice_id);
+CREATE INDEX IF NOT EXISTS idx_expenses_status ON expenses(status);
+CREATE INDEX IF NOT EXISTS idx_leads_status ON leads(status);
+CREATE INDEX IF NOT EXISTS idx_employees_status ON employees(status);
+CREATE INDEX IF NOT EXISTS idx_leave_requests_employee ON leave_requests(employee_id);
+CREATE INDEX IF NOT EXISTS idx_leave_requests_status ON leave_requests(status);
+CREATE INDEX IF NOT EXISTS idx_payroll_employee ON payroll(employee_id);
+CREATE INDEX IF NOT EXISTS idx_attendance_employee ON attendance(employee_id);
+CREATE INDEX IF NOT EXISTS idx_attendance_date ON attendance(date);
+
+-- =====================================================
+-- Schema Complete for https://kubeadm.co.zw
+-- =====================================================
